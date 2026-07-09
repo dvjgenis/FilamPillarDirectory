@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from types import SimpleNamespace
+
 import auth
 
 
@@ -26,3 +28,43 @@ def test_admin_pages_when_authenticated(monkeypatch):
 def test_is_admin_page():
     assert auth.is_admin_page("👥 Directory") is True
     assert auth.is_admin_page("📊 Overview") is False
+
+
+def test_normalize_credentials_lowercases_and_deep_copies():
+    nested = SimpleNamespace(
+        items=lambda: [
+            (
+                "usernames",
+                SimpleNamespace(
+                    items=lambda: [
+                        (
+                            "FilPilChurch",
+                            SimpleNamespace(
+                                items=lambda: [
+                                    ("email", "a@b.c"),
+                                    ("name", "Staff"),
+                                    ("password", "$2b$12$abc"),
+                                ]
+                            ),
+                        )
+                    ]
+                ),
+            )
+        ]
+    )
+    # Prefer plain dict path (AttrDict-like nested mappings)
+    raw = {
+        "usernames": {
+            "FilPilChurch": {
+                "email": "a@b.c",
+                "name": "Staff",
+                "password": "$2b$12$abc",
+            }
+        }
+    }
+    normalized = auth._normalize_credentials(raw)
+    assert list(normalized["usernames"].keys()) == ["filpilchurch"]
+    user = normalized["usernames"]["filpilchurch"]
+    assert user["email"] == "a@b.c"
+    user["failed_login_attempts"] = 0  # must be mutable
+    assert user["failed_login_attempts"] == 0

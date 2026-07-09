@@ -42,13 +42,23 @@ def _resolve_credentials_path() -> Path | None:
 
 def credentials_missing() -> bool:
     try:
-        import streamlit as st
-
         if st.secrets.get("credentials"):
             return False
     except Exception:
         pass
     return not CREDENTIALS_PATH.exists()
+
+
+def _deep_plain(value):
+    """Recursively convert Streamlit AttrDict / Mapping to plain mutable dicts."""
+    if isinstance(value, dict):
+        return {str(k): _deep_plain(v) for k, v in value.items()}
+    if hasattr(value, "items") and not isinstance(value, (str, bytes)):
+        try:
+            return {str(k): _deep_plain(v) for k, v in value.items()}
+        except Exception:
+            return value
+    return value
 
 
 def _normalize_cookie(cookie: dict) -> dict:
@@ -60,6 +70,20 @@ def _normalize_cookie(cookie: dict) -> dict:
     }
 
 
+def _normalize_credentials(credentials: dict) -> dict:
+    """
+    streamlit-authenticator lowercases usernames and mutates user dicts
+    (failed_login_attempts). Secrets AttrDicts are immutable, so convert
+    to plain dicts and store usernames in lowercase.
+    """
+    plain = _deep_plain(credentials)
+    usernames = plain.get("usernames") or {}
+    plain["usernames"] = {
+        str(username).lower(): dict(user) for username, user in usernames.items()
+    }
+    return plain
+
+
 def _config_from_secrets() -> dict | None:
     try:
         credentials = st.secrets.get("credentials")
@@ -67,8 +91,8 @@ def _config_from_secrets() -> dict | None:
         # Staff login on Streamlit Cloud requires the credentials block.
         if credentials and cookie and cookie.get("key"):
             return {
-                "credentials": dict(credentials),
-                "cookie": _normalize_cookie(dict(cookie)),
+                "credentials": _normalize_credentials(credentials),
+                "cookie": _normalize_cookie(_deep_plain(cookie)),
             }
     except Exception:
         pass
@@ -87,8 +111,10 @@ def load_auth_config() -> dict:
         )
     with open(path, "rb") as f:
         config = tomllib.load(f)
-    config["cookie"] = _normalize_cookie(dict(config.get("cookie", {})))
-    return config
+    return {
+        "credentials": _normalize_credentials(config.get("credentials", {})),
+        "cookie": _normalize_cookie(dict(config.get("cookie", {}))),
+    }
 
 
 def load_authenticator() -> stauth.Authenticate | None:
@@ -104,6 +130,7 @@ def load_authenticator() -> stauth.Authenticate | None:
         cookie["name"],
         cookie["key"],
         cookie["expiry_days"],
+        auto_hash=False,
     )
 
 
