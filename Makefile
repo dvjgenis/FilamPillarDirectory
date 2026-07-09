@@ -1,4 +1,4 @@
-.PHONY: dev dev-sheets dev-sample sync-secrets install test
+.PHONY: dev dev-sheets dev-sample sync-secrets pregeocode install test
 
 dev: install
 	streamlit run app.py
@@ -12,6 +12,12 @@ dev-sample: install
 
 sync-secrets:
 	python scripts/sync_streamlit_secrets.py
+
+pregeocode:
+	python scripts/pregeocode.py
+
+pregeocode-secrets:
+	python scripts/pregeocode.py --print-secrets
 
 install:
 	pip install -r requirements.txt

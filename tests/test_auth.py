@@ -8,8 +8,15 @@ import auth
 
 
 def test_public_navigation_labels():
-    assert len(auth.PUBLIC_PAGE_LABELS) == 4
-    assert auth.PUBLIC_PAGE_LABELS[0] == "📊 Overview"
+    assert len(auth.PUBLIC_PAGE_LABELS) == 5
+    assert auth.PUBLIC_PAGE_LABELS[0] == "🏠 Home"
+    assert auth.PUBLIC_PAGE_LABELS[1] == "📊 Overview"
+
+
+def test_credentials_missing_without_real_config(monkeypatch, tmp_path):
+    monkeypatch.setattr(auth, "CREDENTIALS_PATH", tmp_path / "missing.toml")
+    monkeypatch.setattr(auth, "_has_secrets_credentials", lambda: False)
+    assert auth.credentials_missing() is True
 
 
 def test_admin_navigation_labels():

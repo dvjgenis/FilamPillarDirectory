@@ -151,10 +151,14 @@ make test
 
 1. Push code to GitHub — **do not** commit the real CSV, geocode cache, or credentials
 2. Connect the repo to [Streamlit Community Cloud](https://streamlit.io/cloud) (or your host)
-3. Add secrets: `google_sheets`, `gcp_service_account`, admin `cookie` key
-4. Run `python scripts/setup_admin.py` locally and copy the generated `admin_credentials.toml` fields into secrets, or configure credentials separately
+3. Run `make sync-secrets` locally and paste the full generated `.streamlit/secrets.toml` into Streamlit Cloud → App settings → Secrets (includes `google_sheets`, `gcp_service_account`, `[credentials]`, and `[cookie]`)
+4. Bootstrap geocoding for Cloud (optional but recommended):
+   - `make pregeocode` — builds `geocode_cache.json` locally
+   - `make pregeocode-secrets` — prints a `[geocode_cache]` block to paste into secrets so maps work immediately after deploy
 5. Share the Google Sheet only with trusted staff + the service account
 6. Host behind HTTPS (Streamlit Cloud does this automatically)
+
+**Note:** Without a secrets geocode cache, the first visit to a Map page geocodes missing addresses (~1 sec each) with a visible progress bar. Other pages load immediately.
 
 ## Project layout
 
@@ -169,6 +173,7 @@ views/
   shared.py         CSS, calendar, charts
 scripts/
   setup_admin.py    Credential generator
+  pregeocode.py     Build geocode cache for local dev or Streamlit secrets
   clean_csv.py      CSV cleanup and audit
 data/
   sample_directory.csv

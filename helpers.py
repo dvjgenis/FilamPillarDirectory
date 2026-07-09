@@ -244,19 +244,30 @@ def get_public_map_df(df: pd.DataFrame) -> pd.DataFrame:
     return df[PUBLIC_MAP_COLUMNS].copy()
 
 
+PUBLIC_EVENT_FIELDS = {"type", "name", "month", "day", "church"}
+
+
 def sanitize_events_for_public(events: list[dict]) -> list[dict]:
-    """Replace event names with first names only for public calendar."""
+    """Replace event names with first names only; strip admin-only fields."""
     public = []
     for e in events:
-        pe = {**e}
         if e["type"] == "birthday":
             first = e.get("first_name") or (e["name"].split()[0] if e.get("name") else "")
-            pe["name"] = display_value(first) if not _is_missing(first) else "Someone"
+            name = display_value(first) if not _is_missing(first) else "Someone"
         elif e["type"] == "anniversary":
             parts = e["name"].split(" & ")
             first_names = [p.split()[0] for p in parts if p.strip()]
-            pe["name"] = " & ".join(first_names) if first_names else "Anniversary"
-        public.append(pe)
+            name = " & ".join(first_names) if first_names else "Anniversary"
+        else:
+            continue
+
+        public.append({
+            "type": e["type"],
+            "name": name,
+            "month": e["month"],
+            "day": e["day"],
+            "church": e["church"],
+        })
     return public
 
 
@@ -325,7 +336,7 @@ def group_households(df: pd.DataFrame) -> list[dict]:
     return households
 
 
-def _load_geocode_cache() -> dict:
+def _load_file_geocode_cache() -> dict:
     if not GEOCODE_CACHE_PATH.exists():
         return {}
     try:
@@ -335,18 +346,30 @@ def _load_geocode_cache() -> dict:
         return {}
 
 
-def _save_geocode_cache(cache: dict) -> None:
-    with open(GEOCODE_CACHE_PATH, "w") as f:
-        json.dump(cache, f, indent=2)
+def _load_secrets_geocode_cache() -> dict:
+    try:
+        import streamlit as st
+
+        raw = st.secrets.get("geocode_cache")
+        if not raw:
+            return {}
+        if isinstance(raw, dict):
+            return dict(raw)
+        return json.loads(str(raw))
+    except Exception:
+        return {}
 
 
 def load_geocode_cache(*, warn_on_corrupt: bool = False) -> dict:
-    """Load geocode cache; optionally surface corrupt-cache recovery to the UI."""
+    """Load geocode cache from secrets bootstrap, then overlay local file."""
+    cache = _load_secrets_geocode_cache()
     if not GEOCODE_CACHE_PATH.exists():
-        return {}
+        return cache
     try:
         with open(GEOCODE_CACHE_PATH) as f:
-            return json.load(f)
+            file_cache = json.load(f)
+        cache.update(file_cache)
+        return cache
     except json.JSONDecodeError:
         if warn_on_corrupt:
             import streamlit as st
@@ -355,7 +378,7 @@ def load_geocode_cache(*, warn_on_corrupt: bool = False) -> dict:
                 "Geocode cache file was corrupt and has been reset. "
                 "Re-run geocoding from the Household Map page."
             )
-        return {}
+        return cache
 
 
 def collect_directory_addresses(df: pd.DataFrame | None = None) -> list[str]:
@@ -366,6 +389,36 @@ def collect_directory_addresses(df: pd.DataFrame | None = None) -> list[str]:
             if display_value(address) != "Not available":
                 addresses.add(address)
     return sorted(addresses)
+
+
+def _save_geocode_cache(cache: dict) -> None:
+    with open(GEOCODE_CACHE_PATH, "w") as f:
+        json.dump(cache, f, indent=2)
+
+
+def geocode_missing_count(df: pd.DataFrame | None) -> tuple[int, int]:
+    """Return (mapped_count, total_address_count) for directory map addresses."""
+    addresses = collect_directory_addresses(df)
+    cache = load_geocode_cache()
+    mapped = sum(1 for a in addresses if cache.get(a, {}).get("lat") is not None)
+    return mapped, len(addresses)
+
+
+def ensure_map_geocoded(
+    df: pd.DataFrame,
+    progress_callback=None,
+) -> tuple[bool, str | None]:
+    """Geocode missing church + household addresses for map views."""
+    try:
+        ensure_church_geocoded()
+        addresses = collect_directory_addresses(df)
+        cache = load_geocode_cache()
+        missing = [a for a in addresses if a not in cache or cache[a].get("lat") is None]
+        if missing:
+            geocode_addresses(missing, progress_callback)
+        return True, None
+    except Exception as exc:
+        return False, str(exc).strip() or exc.__class__.__name__
 
 
 def ensure_directory_geocoded(df: pd.DataFrame) -> None:
@@ -485,7 +538,7 @@ def geocode_addresses(
     progress_callback=None,
 ) -> tuple[dict, list[str]]:
     """Geocode addresses with local JSON cache. Returns {address: {lat, lng}}."""
-    cache = _load_geocode_cache()
+    cache = load_geocode_cache()
     geolocator = Nominatim(user_agent="church_directory_streamlit")
     failed = []
 
@@ -521,18 +574,54 @@ def _hex_to_rgba(hex_color: str, alpha: int = 200) -> list[int]:
     return [r, g, b, alpha]
 
 
+# Chicagoland + nearby states; keeps international/outlier geocodes off the map.
+MAP_DISPLAY_BOUNDS = {
+    "lat_min": 36.0,
+    "lat_max": 46.5,
+    "lng_min": -96.0,
+    "lng_max": -82.0,
+}
+
+
+def is_map_display_coordinate(lat: float, lng: float) -> bool:
+    """Return True when coordinates fall in the regional map viewport."""
+    return (
+        MAP_DISPLAY_BOUNDS["lat_min"] <= lat <= MAP_DISPLAY_BOUNDS["lat_max"]
+        and MAP_DISPLAY_BOUNDS["lng_min"] <= lng <= MAP_DISPLAY_BOUNDS["lng_max"]
+    )
+
+
+def out_of_region_geocoded_addresses(
+    addresses: list[str],
+    geocode_cache: dict,
+) -> list[str]:
+    """Addresses geocoded successfully but outside the regional map bounds."""
+    excluded = []
+    for address in addresses:
+        geo = geocode_cache.get(address, {})
+        lat, lng = geo.get("lat"), geo.get("lng")
+        if lat is None or lng is None:
+            continue
+        if not is_map_display_coordinate(lat, lng):
+            excluded.append(address)
+    return sorted(excluded)
+
+
 def build_map_data(households: list[dict], geocode_cache: dict) -> pd.DataFrame:
     """Build dataframe for pydeck map from households + geocode cache."""
     rows = []
     for hh in households:
         geo = geocode_cache.get(hh["address"], {})
-        if geo.get("lat") is None:
+        lat, lng = geo.get("lat"), geo.get("lng")
+        if lat is None or lng is None:
+            continue
+        if not is_map_display_coordinate(lat, lng):
             continue
         hex_color = CHURCH_COLORS.get(hh["primary_church"], "#6B7280")
         rows.append({
             "address": hh["address"],
-            "lat": geo["lat"],
-            "lng": geo["lng"],
+            "lat": lat,
+            "lng": lng,
             "church": hh["primary_church"],
             "size": hh["size"],
             "radius_pixels": min(6 + hh["size"] * 3, 24),
@@ -599,10 +688,11 @@ def build_public_density_data(
 
     for address, _group in valid_df.groupby("Home_Address", sort=False):
         geo = geocode_cache.get(address, {})
-        if geo.get("lat") is None:
+        lat, lng = geo.get("lat"), geo.get("lng")
+        if lat is None or lng is None:
             continue
-
-        lat, lng = geo["lat"], geo["lng"]
+        if not is_map_display_coordinate(lat, lng):
+            continue
         snap_lat = round(lat / grid_size) * grid_size
         snap_lng = round(lng / grid_size) * grid_size
         key = (snap_lat, snap_lng)
@@ -1048,7 +1138,7 @@ def style_figure(
     title: str | None = None,
     show_legend: bool = True,
     pie: bool = False,
-    theme: str = "dark",
+    theme: str = "light",
 ):
     """Apply consistent Plotly styling across dashboard charts."""
     if theme == "light":

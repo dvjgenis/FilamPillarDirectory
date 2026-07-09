@@ -15,7 +15,6 @@ from auth import (
     render_sidebar_auth,
 )
 from data_source import (
-    data_source_label,
     directory_cache_key,
     sheet_cache_ttl,
     uses_google_sheets,
@@ -23,7 +22,7 @@ from data_source import (
 from helpers import (
     build_admin_events,
     build_events,
-    ensure_directory_geocoded,
+    ensure_church_geocoded,
     geocode_cache_mtime,
     get_public_aggregate_df,
     get_public_map_df,
@@ -40,12 +39,13 @@ from views.admin_views import (
 from views.public_views import (
     page_celebrations,
     page_community_map,
+    page_home,
     page_name_lookup,
     page_overview,
 )
 from views.shared import (
     apply_global_styles,
-    render_minor_privacy_note,
+    apply_pending_navigation,
     render_public_sidebar_welcome,
     render_staff_sidebar_welcome,
 )
@@ -67,14 +67,15 @@ _CACHE_TTL = sheet_cache_ttl() if uses_google_sheets() else None
 def _load_directory_core(_cache_key: str):
     df = load_and_clean()
     try:
-        ensure_directory_geocoded(df)
-    except Exception:
-        pass
+        ensure_church_geocoded()
+    except Exception as exc:
+        detail = str(exc).strip() or exc.__class__.__name__
+        st.session_state.setdefault("geocode_warning", f"Church locations could not be geocoded: {detail}")
     return df
 
 
 @st.cache_data(ttl=_CACHE_TTL)
-def get_public_data(_cache_key: str):
+def get_public_data(_cache_key: str, _geocode_mtime: float):
     df = _load_directory_core(_cache_key)
     events = build_events(df)
     public_events = sanitize_events_for_public(events)
@@ -112,7 +113,7 @@ def _handle_load_error(exc: Exception) -> None:
 def load_public_data():
     """Load cached public data; show friendly errors on failure."""
     try:
-        return get_public_data(directory_cache_key())
+        return get_public_data(directory_cache_key(), geocode_cache_mtime())
     except Exception as exc:
         _handle_load_error(exc)
 
@@ -137,7 +138,9 @@ def render_admin_page(page: str, df, households, events):
 
 
 def render_public_page(page: str, df, events, map_df):
-    if page == "📊 Overview":
+    if page == "🏠 Home":
+        page_home(df, events)
+    elif page == "📊 Overview":
         page_overview(df, events)
     elif page == "📅 Celebrations":
         page_celebrations(events)
@@ -151,19 +154,25 @@ def main():
     render_credentials_setup_banner()
     render_security_warnings()
 
+    geocode_warning = st.session_state.pop("geocode_warning", None)
+    if geocode_warning:
+        st.warning(geocode_warning)
+
     with st.sidebar:
         st.title("⛪ Church Directory")
+        st.caption("Filam & Pillar Community Directory")
         authenticated = render_sidebar_auth(authenticator)
 
         if authenticated:
-            st.caption("Community portal · Staff mode active")
+            st.caption("Staff mode active")
         else:
             st.caption("Public community portal")
 
         if uses_google_sheets():
-            st.caption(f"Data: {data_source_label()} · refreshes every {sheet_cache_ttl()}s")
+            st.caption(f"Live data · refreshes every {sheet_cache_ttl()}s")
 
         nav_mode = "staff" if authenticated else "public"
+        apply_pending_navigation(f"nav_{nav_mode}")
         options = navigation_options()
         page = st.radio(
             "Navigate",
@@ -180,8 +189,10 @@ def main():
                 st.rerun()
 
         st.divider()
+        admin_payload = None
         if authenticated:
-            df_admin, households, _ = load_admin_data()
+            admin_payload = load_admin_data()
+            df_admin, households, _ = admin_payload
             col1, col2 = st.columns(2)
             col1.metric("People", len(df_admin))
             col2.metric("Churches", df_admin["Church_Affiliation"].nunique())
@@ -190,15 +201,8 @@ def main():
             col4.metric("Members", int(df_admin["Is_Member"].sum()))
             render_staff_sidebar_welcome()
         else:
-            df_public, _, _ = load_public_data()
-            col1, col2 = st.columns(2)
-            col1.metric("People", len(df_public))
-            col2.metric("Churches", df_public["Church_Affiliation"].nunique())
             render_public_sidebar_welcome()
-            st.caption(
-                "Public view — limited info only. Use **Staff Login** above for full access."
-            )
-            render_minor_privacy_note()
+            st.caption("Limited public view. Use **Staff Login** for full access.")
 
     if authenticated or is_admin_page(page):
         if not is_admin_authenticated():
@@ -206,7 +210,9 @@ def main():
             st.stop()
         if page not in ADMIN_PAGE_LABELS:
             page = ADMIN_PAGE_LABELS[0]
-        df, households, events = load_admin_data()
+        if admin_payload is None:
+            admin_payload = load_admin_data()
+        df, households, events = admin_payload
         render_admin_page(page, df, households, events)
     else:
         df, events, map_df = load_public_data()

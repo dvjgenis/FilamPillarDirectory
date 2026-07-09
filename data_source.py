@@ -216,7 +216,11 @@ def load_directory_from_sheets() -> pd.DataFrame:
 
     records = worksheet.get_all_records()
     if not records:
-        return pd.DataFrame(columns=CSV_COLUMNS)
+        ws_label = ws_name or "(first worksheet)"
+        raise RuntimeError(
+            f"Google Sheet '{sid}' worksheet '{ws_label}' returned no rows. "
+            "Check that the service account has Viewer access and the worksheet tab name is correct."
+        )
 
     df = pd.DataFrame(records)
     for col in CSV_COLUMNS:

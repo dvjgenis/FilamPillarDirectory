@@ -76,6 +76,16 @@ def test_sanitize_events_for_public_first_names_only():
     assert public[1]["name"] == "Alex & Jordan"
 
 
+def test_sanitize_events_strips_sensitive_fields():
+    events = build_events(_sample_df())
+    public = sanitize_events_for_public(events)
+    assert public
+    for event in public:
+        assert "address" not in event
+        assert "first_name" not in event
+        assert set(event.keys()) <= {"type", "name", "month", "day", "church"}
+
+
 def test_public_events_exclude_children_from_parent_records():
     df = pd.DataFrame([
         {

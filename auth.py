@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import tomllib
 from pathlib import Path
 
@@ -15,6 +16,7 @@ SAMPLE_CREDENTIALS_PATH = DATA_DIR / "admin_credentials.sample.toml"
 PLACEHOLDER_COOKIE_KEY = "church_directory_auth_key_change_in_production"
 
 PUBLIC_PAGES = [
+    ("Home", "🏠 Home"),
     ("Overview", "📊 Overview"),
     ("Celebrations", "📅 Celebrations"),
     ("Map", "🗺️ Map"),
@@ -32,20 +34,32 @@ PUBLIC_PAGE_LABELS = [label for _, label in PUBLIC_PAGES]
 ADMIN_PAGE_LABELS = [label for _, label in ADMIN_PAGES]
 
 
+def _is_streamlit_cloud() -> bool:
+    return os.environ.get("STREAMLIT_RUNTIME_ENV") == "cloud"
+
+
+def _has_secrets_credentials() -> bool:
+    try:
+        credentials = st.secrets.get("credentials")
+        cookie = st.secrets.get("cookie")
+        return bool(credentials and cookie and cookie.get("key"))
+    except Exception:
+        return False
+
+
 def _resolve_credentials_path() -> Path | None:
     if CREDENTIALS_PATH.exists():
         return CREDENTIALS_PATH
-    if SAMPLE_CREDENTIALS_PATH.exists():
+    if _has_secrets_credentials():
+        return None
+    if not _is_streamlit_cloud() and SAMPLE_CREDENTIALS_PATH.exists():
         return SAMPLE_CREDENTIALS_PATH
     return None
 
 
 def credentials_missing() -> bool:
-    try:
-        if st.secrets.get("credentials"):
-            return False
-    except Exception:
-        pass
+    if _has_secrets_credentials():
+        return False
     return not CREDENTIALS_PATH.exists()
 
 
@@ -88,7 +102,6 @@ def _config_from_secrets() -> dict | None:
     try:
         credentials = st.secrets.get("credentials")
         cookie = st.secrets.get("cookie")
-        # Staff login on Streamlit Cloud requires the credentials block.
         if credentials and cookie and cookie.get("key"):
             return {
                 "credentials": _normalize_credentials(credentials),
@@ -148,13 +161,13 @@ def cookie_key_is_placeholder() -> bool:
 
 
 def render_credentials_setup_banner() -> None:
-    """Show first-run instructions when admin_credentials.toml is missing."""
+    """Show first-run instructions when staff credentials are not configured."""
     if not credentials_missing():
         return
     st.warning(
-        "**Staff login not configured.** Copy `admin_credentials.sample.toml` to "
-        "`admin_credentials.toml`, or run `python scripts/setup_admin.py` to generate "
-        "secure credentials. Public pages still work without staff login."
+        "**Staff login is disabled.** Add a `[credentials]` block and `[cookie]` to "
+        "Streamlit secrets, or create `admin_credentials.toml` locally via "
+        "`python scripts/setup_admin.py`. Public pages still work without staff login."
     )
 
 
@@ -174,7 +187,7 @@ def render_sidebar_auth(authenticator: stauth.Authenticate | None) -> bool:
     """Render staff login/logout in the sidebar. Returns True if authenticated."""
     if authenticator is None:
         st.markdown("**Staff Login**")
-        st.caption("Configure `admin_credentials.toml` to enable staff access.")
+        st.caption("Staff login is disabled until credentials are configured.")
         return False
 
     if is_admin_authenticated():
@@ -194,7 +207,7 @@ def render_sidebar_auth(authenticator: stauth.Authenticate | None) -> bool:
 
 
 def navigation_options() -> list[str]:
-    """Return exactly 4 pages — admin set when signed in, public set otherwise."""
+    """Return 5 public pages or 4 admin pages depending on auth state."""
     if is_admin_authenticated():
         return ADMIN_PAGE_LABELS
     return PUBLIC_PAGE_LABELS

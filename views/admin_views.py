@@ -27,6 +27,7 @@ from helpers import (
     format_phone,
     geocode_addresses,
     collect_directory_addresses,
+    out_of_region_geocoded_addresses,
     get_events_for_month,
     get_today_events,
     get_upcoming_events,
@@ -38,12 +39,18 @@ from helpers import (
     person_key,
 )
 from views.shared import (
+    apply_hover_sentences,
+    calendar_legend_html,
     calendar_overflow_by_day,
     church_badge_html,
     render_calendar_controls,
     render_calendar_grid_html,
     render_calendar_overflow,
+    render_info_callout,
+    render_metric_row,
     render_page_header,
+    render_viz_card,
+    run_map_geocoding_if_needed,
     show_chart,
 )
 
@@ -185,8 +192,14 @@ def _render_card_pagination(total_items: int, page_key: str) -> tuple[int, int, 
 def page_directory(df, households):
     render_page_header(
         "👥 People Directory",
-        "Search and browse every directory entry with full contact and family details. "
-        "Use filters to narrow results, open a person for all 15 fields, or download a CSV.",
+        "Search and browse every directory entry with full contact and family details.",
+        question="Who is in our directory?",
+    )
+
+    render_info_callout(
+        "Search, filter, or switch between Table, Cards, and Households views. "
+        "Open a person to see all 15 fields, or download a CSV export.",
+        icon="👥",
     )
 
     with st.sidebar.expander("Filters", expanded=True):
@@ -311,6 +324,7 @@ def page_map(df, households):
         "🗺️ Where We Live",
         "Household locations across Chicagoland. Dot color shows primary church affiliation; "
         "dot size reflects household size. Gold markers are church buildings.",
+        question="Where do households live across Chicagoland?",
     )
 
     addresses = collect_directory_addresses(df)
@@ -318,57 +332,72 @@ def page_map(df, households):
     with st.sidebar.expander("Map filters", expanded=True):
         church_filter = st.radio("Show churches", ["All", "Filam", "Pillar"], horizontal=True, key="adm_map_church")
 
-    cache = load_geocode_cache(warn_on_corrupt=True)
+    cache = run_map_geocoding_if_needed(df)
     mapped, total = _geocode_coverage(addresses, cache)
-    st.metric("Addresses mapped", f"{mapped} of {total}")
 
     missing = [a for a in addresses if a not in cache or cache[a].get("lat") is None]
     failed = [a for a in addresses if cache.get(a, {}).get("error")]
 
-    if missing:
-        st.warning(
-            f"**{len(missing)}** address(es) could not be mapped yet. "
-            "New addresses are geocoded automatically when data loads (~1 sec per address). "
-            "Try **Refresh data** in the sidebar, or geocode manually below."
-        )
-        geo_col1, geo_col2 = st.columns(2)
-        with geo_col1:
-            if st.button("Geocode all missing", key="adm_geocode"):
-                progress = st.progress(0)
-                status = st.empty()
+    with st.expander("Map tools (geocoding & coverage)", expanded=bool(missing)):
+        st.metric("Addresses mapped", f"{mapped} of {total}")
+        if missing:
+            st.warning(
+                f"**{len(missing)}** address(es) could not be mapped yet. "
+                "New addresses are geocoded when you open this map (~1 sec per address). "
+                "Try **Refresh data** in the sidebar, or geocode manually below."
+            )
+            geo_col1, geo_col2 = st.columns(2)
+            with geo_col1:
+                if st.button("Geocode all missing", key="adm_geocode"):
+                    progress = st.progress(0)
+                    status = st.empty()
 
-                def on_progress(current, total_count, addr, cached=False):
-                    progress.progress(current / total_count)
-                    label = "cached" if cached else "geocoding"
-                    status.text(f"{label}: {addr} ({current}/{total_count})")
+                    def on_progress(current, total_count, addr, cached=False):
+                        progress.progress(current / total_count)
+                        label = "cached" if cached else "geocoding"
+                        status.text(f"{label}: {addr} ({current}/{total_count})")
 
-                with st.spinner("Geocoding addresses via OpenStreetMap..."):
-                    cache, failed_run = geocode_addresses(missing, on_progress)
-                    st.session_state.geocode_cache = cache
+                    with st.spinner("Geocoding addresses via OpenStreetMap..."):
+                        cache, failed_run = geocode_addresses(missing, on_progress)
 
-                if failed_run:
-                    st.error(f"Failed to geocode {len(failed_run)} address(es):")
-                    st.dataframe(pd.DataFrame({"Address": failed_run}), hide_index=True)
-                else:
-                    st.success("All requested addresses geocoded successfully!")
-                st.rerun()
-        with geo_col2:
-            if failed and st.button("Retry failed only", key="adm_geocode_retry"):
-                progress = st.progress(0)
-                status = st.empty()
+                    if failed_run:
+                        st.error(f"Failed to geocode {len(failed_run)} address(es):")
+                        st.dataframe(pd.DataFrame({"Address": failed_run}), hide_index=True)
+                    else:
+                        st.success("All requested addresses geocoded successfully!")
+                    st.rerun()
+            with geo_col2:
+                if failed and st.button("Retry failed only", key="adm_geocode_retry"):
+                    progress = st.progress(0)
+                    status = st.empty()
 
-                def on_progress(current, total_count, addr, cached=False):
-                    progress.progress(current / total_count)
-                    label = "cached" if cached else "geocoding"
-                    status.text(f"{label}: {addr} ({current}/{total_count})")
+                    def on_progress(current, total_count, addr, cached=False):
+                        progress.progress(current / total_count)
+                        label = "cached" if cached else "geocoding"
+                        status.text(f"{label}: {addr} ({current}/{total_count})")
 
-                with st.spinner("Retrying failed addresses..."):
-                    cache, failed_run = geocode_addresses(failed, on_progress)
-                if failed_run:
-                    st.error(f"Still failed: {len(failed_run)} address(es)")
-                else:
-                    st.success("Retry complete!")
-                st.rerun()
+                    with st.spinner("Retrying failed addresses..."):
+                        cache, failed_run = geocode_addresses(failed, on_progress)
+                    if failed_run:
+                        st.error(f"Still failed: {len(failed_run)} address(es)")
+                    else:
+                        st.success("Retry complete!")
+                    st.rerun()
+        else:
+            st.success("All addresses are mapped.")
+
+        unmapped = [a for a in addresses if a not in cache or cache[a].get("lat") is None]
+        if unmapped:
+            st.markdown(f"**{len(unmapped)} unmapped address(es)**")
+            st.dataframe(pd.DataFrame({"Address": unmapped}), hide_index=True)
+
+        out_of_region = out_of_region_geocoded_addresses(addresses, cache)
+        if out_of_region:
+            st.markdown(f"**{len(out_of_region)} address(es) outside regional map**")
+            st.caption(
+                "Geocoded but omitted from the map so distant locations do not distort the Chicagoland view."
+            )
+            st.dataframe(pd.DataFrame({"Address": out_of_region}), hide_index=True)
 
     cache = load_geocode_cache()
     map_df = build_map_data(households, cache)
@@ -384,6 +413,12 @@ def page_map(df, households):
 
     if map_df.empty and not church_df.empty:
         st.info(f"No household addresses for {church_filter}, showing church location only.")
+
+    render_info_callout(
+        "Each dot is a household. Larger dots mean more people. Gold markers are church buildings. "
+        "Hover a dot to see the address and members.",
+        icon="📍",
+    )
 
     combined = pd.concat([map_df, church_df], ignore_index=True) if not church_df.empty else map_df
     center_lat = combined["lat"].mean()
@@ -449,7 +484,11 @@ def page_map(df, households):
             layers=layers,
             initial_view_state=pdk.ViewState(latitude=center_lat, longitude=center_lng, zoom=8, pitch=0),
             tooltip={
-                "html": "<b>{members}</b><br/>{address}<br/>Church: {church}<br/>Household size: {size}",
+                "html": (
+                    "<b>{members}</b><br/>"
+                    "This household lives at {address}.<br/>"
+                    "Church: {church} · {size} people in household."
+                ),
                 "style": {"backgroundColor": "#1f2937", "color": "white"},
             },
             map_provider="carto",
@@ -483,34 +522,46 @@ def page_map(df, households):
     top_cities = city_df.groupby("City")["count"].sum().nlargest(12).index.tolist()
     city_df = city_df[city_df["City"].isin(top_cities)]
 
-    fig = px.bar(
-        city_df,
-        y="City",
-        x="count",
-        color="Church_Affiliation",
-        color_discrete_map=CHURCH_COLORS,
-        barmode="stack",
-        orientation="h",
-        labels={"count": "People", "Church_Affiliation": "Church"},
-        title="Top 12 Cities by Church",
-        text="count",
+    def _city_chart():
+        fig = px.bar(
+            city_df,
+            y="City",
+            x="count",
+            color="Church_Affiliation",
+            color_discrete_map=CHURCH_COLORS,
+            barmode="stack",
+            orientation="h",
+            labels={"count": "People", "Church_Affiliation": "Church", "City": "City"},
+            text="count",
+        )
+        fig.update_traces(
+            textposition="inside",
+            textfont=dict(color="#FFFFFF", size=12),
+            insidetextanchor="middle",
+        )
+        fig.update_layout(yaxis=dict(categoryorder="total ascending"))
+        apply_hover_sentences(fig, "city_bar_stacked")
+        show_chart(fig, height=420)
+
+    render_viz_card(
+        "Which cities have the most people by church?",
+        "Top 12 cities by headcount, stacked by church affiliation.",
+        _city_chart,
     )
-    fig.update_traces(
-        textposition="inside",
-        textfont=dict(color="#FFFFFF", size=12),
-        insidetextanchor="middle",
-    )
-    fig.update_layout(yaxis=dict(categoryorder="total ascending"))
-    show_chart(fig, height=420, title="Top 12 Cities by Church")
-
-    unmapped = [a for a in addresses if a not in cache or cache[a].get("lat") is None]
-    if unmapped:
-        with st.expander(f"⚠️ {len(unmapped)} unmapped address(es)"):
-            st.dataframe(pd.DataFrame({"Address": unmapped}), hide_index=True)
 
 
-def _event_label(event: dict) -> str:
-    return event.get("display_name", event["name"])
+def _event_label(event) -> str:
+    """Prefer display_name when set; fall back to name (handles NaN from DataFrame rows)."""
+    if hasattr(event, "get"):
+        display = event.get("display_name")
+        name = event.get("name", "")
+    else:
+        display = event["display_name"] if "display_name" in event else None
+        name = event["name"]
+
+    if display is not None and pd.notna(display) and str(display).strip():
+        return str(display)
+    return str(name)
 
 
 def _filter_admin_events(events: list[dict], event_filter: str) -> list[dict]:
@@ -530,6 +581,7 @@ def page_calendar(df, events):
         "📅 Birthdays & Anniversaries",
         "Full-name calendar for staff planning and pastoral care — includes children's birthdays "
         "listed on parent records alongside each adult's own birthday entry.",
+        question="Who should we celebrate this month?",
     )
 
     today = date.today()
@@ -545,7 +597,7 @@ def page_calendar(df, events):
         upcoming = _filter_admin_events(get_upcoming_events(events, today, 30), event_filter)
 
         if upcoming:
-            for e in upcoming[:15]:
+            for e in upcoming[:20]:
                 safe_label = html.escape(_event_label(e))
                 st.markdown(
                     f"{event_icon(e['type'])} **{safe_label}**  \n"
@@ -563,7 +615,7 @@ def page_calendar(df, events):
         )
         st.success(f"**Today ({today.strftime('%B %d')}):** {names}")
 
-    month_idx, year_idx = render_calendar_controls(today)
+    month_idx, year_idx = render_calendar_controls(today, mode="staff")
 
     month_events = _filter_admin_events(get_events_for_month(events, month_idx), event_filter)
 
@@ -571,63 +623,85 @@ def page_calendar(df, events):
     for e in month_events:
         events_by_day.setdefault(e["day"], []).append(e)
 
-    st.subheader(f"{MONTH_NAMES[month_idx - 1]} {year_idx}")
     st.markdown(
-        f"<span style='color:{CHURCH_COLORS['Filam']}'>●</span> {church_full_name('Filam')} &nbsp;&nbsp; "
-        f"<span style='color:{CHURCH_COLORS['Pillar']}'>●</span> {church_full_name('Pillar')} &nbsp;&nbsp; "
-        "🎂 = Adult birthday &nbsp;&nbsp; 👶 = Child birthday &nbsp;&nbsp; 💍 = Anniversary",
+        '<p class="viz-question">Who are we celebrating this month?</p>',
         unsafe_allow_html=True,
     )
+    st.subheader(f"{MONTH_NAMES[month_idx - 1]} {year_idx}")
+    st.markdown(calendar_legend_html(include_children=True), unsafe_allow_html=True)
     st.markdown(
         render_calendar_grid_html(year_idx, month_idx, events_by_day, today),
         unsafe_allow_html=True,
     )
     render_calendar_overflow(calendar_overflow_by_day(events_by_day))
 
-    st.subheader("Event Timeline")
     if month_events:
-        timeline_df = pd.DataFrame(month_events)
-        timeline_df["label"] = timeline_df.apply(_event_label, axis=1)
-        timeline_df["event_type"] = timeline_df["type"].map({
-            "birthday": "Adult Birthday",
-            "child_birthday": "Child Birthday",
-            "anniversary": "Anniversary",
-        })
-        fig = px.scatter(
-            timeline_df,
-            x="day",
-            y="event_type",
-            color="church",
-            hover_name="label",
-            color_discrete_map=CHURCH_COLORS,
-            labels={"day": "Day of Month", "event_type": "Event Type", "church": "Church"},
-            title=f"Events in {MONTH_NAMES[month_idx - 1]}",
+        def _timeline_chart():
+            timeline_df = pd.DataFrame(month_events)
+            timeline_df["label"] = timeline_df.apply(_event_label, axis=1)
+            timeline_df["event_type"] = timeline_df["type"].map({
+                "birthday": "Adult Birthday",
+                "child_birthday": "Child Birthday",
+                "anniversary": "Anniversary",
+            })
+            fig = px.scatter(
+                timeline_df,
+                x="day",
+                y="event_type",
+                color="church",
+                hover_name="label",
+                color_discrete_map=CHURCH_COLORS,
+                labels={"day": "Day of Month", "event_type": "Event Type", "church": "Church"},
+            )
+            fig.update_traces(
+                marker=dict(size=14),
+                hovertemplate=(
+                    "<b>%{hovertext}</b> on day %{x} (%{fullData.name}).<extra></extra>"
+                ),
+            )
+            show_chart(fig, height=280)
+
+        render_viz_card(
+            "When do events cluster during this month?",
+            "Each dot is one celebration. Hover to see the full name and church.",
+            _timeline_chart,
         )
-        fig.update_traces(marker=dict(size=14))
-        show_chart(fig, height=280, title=f"Events in {MONTH_NAMES[month_idx - 1]}")
     else:
         st.info(f"No events in {MONTH_NAMES[month_idx - 1]} with current filters.")
 
 
 def _render_data_quality_section(df, households) -> None:
+    from data_source import data_source_label, sheet_cache_ttl, uses_google_sheets
+
     issues = audit_data_quality(df)
     cache = load_geocode_cache()
     addresses = collect_directory_addresses(df)
     mapped, total = _geocode_coverage(addresses, cache)
-    csv_modified = "Unknown"
-    if CSV_PATH.exists():
+    issue_count = (
+        len(issues["missing_phones"])
+        + len(issues["missing_emails"])
+        + len(issues["missing_birthdays"])
+        + len(issues["children_mismatches"])
+    )
+
+    if uses_google_sheets():
+        source_label = f"{data_source_label()} · refreshes every {sheet_cache_ttl()}s"
+    elif CSV_PATH.exists():
         from datetime import datetime
 
-        csv_modified = datetime.fromtimestamp(csv_mtime()).strftime("%Y-%m-%d %H:%M")
+        source_label = f"CSV last modified: {datetime.fromtimestamp(csv_mtime()).strftime('%Y-%m-%d %H:%M')}"
+    else:
+        source_label = "Data source: unknown"
 
-    with st.expander("Data Quality", expanded=False):
+    label = f"Data Quality ({issue_count} issue{'s' if issue_count != 1 else ''})" if issue_count else "Data Quality"
+    with st.expander(label, expanded=False):
         q1, q2, q3, q4 = st.columns(4)
         q1.metric("Missing phones", len(issues["missing_phones"]))
         q2.metric("Missing emails", len(issues["missing_emails"]))
         q3.metric("Missing birthdays", len(issues["missing_birthdays"]))
         q4.metric("Geocoded", f"{mapped}/{total}")
 
-        st.caption(f"CSV last modified: {csv_modified}")
+        st.caption(source_label)
 
         if issues["children_mismatches"]:
             st.markdown("**Children name/birthday mismatches**")
@@ -640,6 +714,7 @@ def page_insights(df, households, events):
         "📊 Community Insights",
         "Internal statistics on membership, opt-in rates, household sizes, and data completeness. "
         "Useful for leadership overview — not shown on the public portal.",
+        question="How healthy is our directory data?",
     )
 
     _render_data_quality_section(df, households)
@@ -648,13 +723,14 @@ def page_insights(df, households, events):
     week_events = get_upcoming_events(events, today, 7)
 
     st.subheader("Data Completeness")
-    dc1, dc2, dc3 = st.columns(3)
     anniv_rate = df["Anniversary_Month"].notna().sum() / len(df) * 100
     member_rate = df["Is_Member"].sum() / len(df) * 100
     optin_rate = df["Opt_In_Announcements"].sum() / len(df) * 100
-    dc1.metric("Anniversary Data", f"{anniv_rate:.0f}%")
-    dc2.metric("Membership Rate", f"{member_rate:.0f}%")
-    dc3.metric("Announcement Opt-in", f"{optin_rate:.0f}%")
+    render_metric_row([
+        ("Anniversary Data", f"{anniv_rate:.0f}%", "Share of people with an anniversary on file."),
+        ("Membership Rate", f"{member_rate:.0f}%", "Share of people marked as members."),
+        ("Announcement Opt-in", f"{optin_rate:.0f}%", "Share of people opted into announcements."),
+    ])
 
     if week_events:
         st.subheader("This Week")
@@ -669,116 +745,166 @@ def page_insights(df, households, events):
     c1, c2 = st.columns(2)
 
     with c1:
-        church_counts = df["Church_Affiliation"].value_counts().reset_index()
-        church_counts.columns = ["Church", "Count"]
-        fig = px.pie(
-            church_counts,
-            names="Church",
-            values="Count",
-            color="Church",
-            color_discrete_map=CHURCH_COLORS,
-            hole=0.45,
-            title="Church Affiliation",
+        def _church_pie():
+            church_counts = df["Church_Affiliation"].value_counts().reset_index()
+            church_counts.columns = ["Church", "Count"]
+            fig = px.pie(
+                church_counts,
+                names="Church",
+                values="Count",
+                color="Church",
+                color_discrete_map=CHURCH_COLORS,
+                hole=0.45,
+            )
+            apply_hover_sentences(fig, "church_pie")
+            show_chart(fig, pie=True)
+
+        render_viz_card(
+            "How are we split by church?",
+            "Each slice is one person in the directory.",
+            _church_pie,
         )
-        show_chart(fig, pie=True, title="Church Affiliation")
 
     with c2:
-        member_data = (
-            df.groupby(["Church_Affiliation", "Is_Member"])
-            .size()
-            .reset_index(name="Count")
+        def _membership_chart():
+            member_data = (
+                df.groupby(["Church_Affiliation", "Is_Member"])
+                .size()
+                .reset_index(name="Count")
+            )
+            member_data["Status"] = member_data["Is_Member"].map({True: "Member", False: "Non-Member"})
+            fig = px.bar(
+                member_data,
+                x="Church_Affiliation",
+                y="Count",
+                color="Status",
+                barmode="group",
+                color_discrete_map={"Member": "#10B981", "Non-Member": "#9CA3AF"},
+                labels={"Church_Affiliation": "Church", "Count": "People", "Status": "Status"},
+            )
+            apply_hover_sentences(fig, "membership_grouped")
+            show_chart(fig)
+
+        render_viz_card(
+            "Who is a member at each church?",
+            "Grouped bars compare members and non-members side by side.",
+            _membership_chart,
         )
-        member_data["Status"] = member_data["Is_Member"].map({True: "Member", False: "Non-Member"})
-        fig = px.bar(
-            member_data,
-            x="Church_Affiliation",
-            y="Count",
-            color="Status",
-            barmode="group",
-            color_discrete_map={"Member": "#10B981", "Non-Member": "#9CA3AF"},
-            title="Membership by Church",
-        )
-        show_chart(fig, title="Membership by Church")
 
     c3, c4 = st.columns(2)
 
     with c3:
-        opt_data = (
-            df.groupby(["Church_Affiliation", "Opt_In_Announcements"])
-            .size()
-            .reset_index(name="Count")
+        def _optin_chart():
+            opt_data = (
+                df.groupby(["Church_Affiliation", "Opt_In_Announcements"])
+                .size()
+                .reset_index(name="Count")
+            )
+            opt_data["Status"] = opt_data["Opt_In_Announcements"].map(
+                {True: "Opted In", False: "Not Opted In"}
+            )
+            fig = px.bar(
+                opt_data,
+                x="Church_Affiliation",
+                y="Count",
+                color="Status",
+                barmode="stack",
+                color_discrete_map={"Opted In": "#3B82F6", "Not Opted In": "#D1D5DB"},
+                labels={"Church_Affiliation": "Church", "Count": "People", "Status": "Status"},
+            )
+            apply_hover_sentences(fig, "optin_stacked")
+            show_chart(fig)
+
+        render_viz_card(
+            "Who opted into announcements?",
+            "Stacked bars show opt-in vs. not opted in for each church.",
+            _optin_chart,
         )
-        opt_data["Status"] = opt_data["Opt_In_Announcements"].map(
-            {True: "Opted In", False: "Not Opted In"}
-        )
-        fig = px.bar(
-            opt_data,
-            x="Church_Affiliation",
-            y="Count",
-            color="Status",
-            barmode="stack",
-            color_discrete_map={"Opted In": "#3B82F6", "Not Opted In": "#D1D5DB"},
-            title="Announcement Opt-in by Church",
-        )
-        show_chart(fig, title="Announcement Opt-in by Church")
 
     with c4:
-        size_df = household_size_counts(households)
-        fig = px.bar(
-            size_df,
-            x="size",
-            y="count",
-            title="Household Size Distribution",
-            labels={"size": "People per Household", "count": "Households"},
-            color_discrete_sequence=["#8B5CF6"],
-            text="count",
-        )
-        fig.update_traces(textposition="outside")
-        show_chart(fig, title="Household Size Distribution")
+        def _household_chart():
+            size_df = household_size_counts(households)
+            fig = px.bar(
+                size_df,
+                x="size",
+                y="count",
+                labels={"size": "People per Household", "count": "Households"},
+                color_discrete_sequence=["#8B5CF6"],
+                text="count",
+            )
+            fig.update_traces(textposition="outside")
+            apply_hover_sentences(fig, "household_size")
+            show_chart(fig)
 
-    st.subheader("Event Density by Month")
+        render_viz_card(
+            "How big are our households?",
+            "Number of households grouped by how many people live at each address.",
+            _household_chart,
+        )
+
     hc1, hc2 = st.columns(2)
 
     with hc1:
-        bday_counts = month_event_counts_by_church(events, "birthday")
-        fig = px.bar(
-            bday_counts,
-            x="month_name",
-            y="count",
-            color="church",
-            color_discrete_map=CHURCH_COLORS,
-            barmode="stack",
-            labels={"month_name": "", "count": "Count", "church": "Church"},
-            title="Birthdays by Month",
+        def _bday_chart():
+            bday_counts = month_event_counts_by_church(events, "birthday")
+            fig = px.bar(
+                bday_counts,
+                x="month_name",
+                y="count",
+                color="church",
+                color_discrete_map=CHURCH_COLORS,
+                barmode="stack",
+                labels={"month_name": "Month", "count": "Celebrations", "church": "Church"},
+            )
+            apply_hover_sentences(fig, "month_stacked")
+            show_chart(fig, height=300)
+
+        render_viz_card(
+            "When are birthdays spread through the year?",
+            "Stacked bars show birthday count per month, by church.",
+            _bday_chart,
         )
-        show_chart(fig, height=300, title="Birthdays by Month")
 
     with hc2:
-        anniv_counts = month_event_counts_by_church(events, "anniversary")
-        fig = px.bar(
-            anniv_counts,
-            x="month_name",
-            y="count",
-            color="church",
-            color_discrete_map=CHURCH_COLORS,
-            barmode="stack",
-            labels={"month_name": "", "count": "Count", "church": "Church"},
-            title="Anniversaries by Month",
-        )
-        show_chart(fig, height=300, title="Anniversaries by Month")
+        def _anniv_chart():
+            anniv_counts = month_event_counts_by_church(events, "anniversary")
+            fig = px.bar(
+                anniv_counts,
+                x="month_name",
+                y="count",
+                color="church",
+                color_discrete_map=CHURCH_COLORS,
+                barmode="stack",
+                labels={"month_name": "Month", "count": "Celebrations", "church": "Church"},
+            )
+            apply_hover_sentences(fig, "month_stacked")
+            show_chart(fig, height=300)
 
-    st.subheader("Top Cities")
-    city_counts = df["City"].value_counts().head(10).reset_index()
-    city_counts.columns = ["City", "People"]
-    fig = px.bar(
-        city_counts,
-        x="People",
-        y="City",
-        orientation="h",
-        title="Top 10 Cities",
-        color_discrete_sequence=["#6366F1"],
-        text="People",
+        render_viz_card(
+            "When are anniversaries spread through the year?",
+            "Stacked bars show anniversary count per month, by church.",
+            _anniv_chart,
+        )
+
+    def _top_cities_chart():
+        city_counts = df["City"].value_counts().head(10).reset_index()
+        city_counts.columns = ["City", "People"]
+        fig = px.bar(
+            city_counts,
+            x="People",
+            y="City",
+            orientation="h",
+            color_discrete_sequence=["#6366F1"],
+            text="People",
+            labels={"People": "People", "City": "City"},
+        )
+        fig.update_traces(textposition="outside")
+        fig.update_layout(yaxis=dict(autorange="reversed"))
+        apply_hover_sentences(fig, "city_bar")
+        show_chart(fig, height=400)
+
+    render_viz_card(
+        "Which cities have the most people?",
+        "Top 10 cities by headcount across both churches.",
+        _top_cities_chart,
     )
-    fig.update_traces(textposition="outside")
-    fig.update_layout(yaxis=dict(autorange="reversed"))
-    show_chart(fig, height=400, title="Top 10 Cities")

@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import html
+from collections.abc import Callable
 from datetime import date
+from typing import Any
 
 import streamlit as st
 
@@ -26,6 +28,104 @@ GLOBAL_STYLES = """
     border-radius: 12px;
     padding: 12px;
     color: #1F2937;
+}
+.hero-card {
+    background: linear-gradient(135deg, #EFF6FF 0%, #F8FAFC 55%, #FFFFFF 100%);
+    border: 1px solid #BFDBFE;
+    border-radius: 16px;
+    padding: 28px 32px;
+    margin-bottom: 1.5rem;
+}
+.hero-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1E3A8A;
+    margin: 0 0 8px 0;
+    line-height: 1.3;
+}
+.hero-subtitle {
+    font-size: 1rem;
+    color: #475569;
+    margin: 0;
+    line-height: 1.5;
+}
+.quick-link-card {
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+    padding: 16px 18px;
+    height: 100%;
+    transition: border-color 0.15s;
+}
+.quick-link-card:hover {
+    border-color: #93C5FD;
+}
+.quick-link-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1F2937;
+    margin: 0 0 6px 0;
+}
+.quick-link-desc {
+    font-size: 0.85rem;
+    color: #64748B;
+    margin: 0;
+    line-height: 1.4;
+}
+.viz-card {
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+    padding: 16px 18px 8px 18px;
+    margin-bottom: 1rem;
+}
+.viz-question {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1F2937;
+    margin: 0 0 4px 0;
+}
+.viz-caption {
+    font-size: 0.85rem;
+    color: #64748B;
+    margin: 0 0 12px 0;
+    line-height: 1.4;
+}
+.info-callout {
+    background: #F0F9FF;
+    border: 1px solid #BAE6FD;
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: #0C4A6E;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+.info-callout-warn {
+    background: #FFFBEB;
+    border-color: #FDE68A;
+    color: #92400E;
+}
+.lookup-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+.lookup-table th {
+    text-align: left;
+    padding: 10px 12px;
+    background: #F8FAFC;
+    border-bottom: 2px solid #E5E7EB;
+    color: #374151;
+    font-weight: 600;
+}
+.lookup-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #F1F5F9;
+    color: #1F2937;
+}
+.lookup-table tr:hover td {
+    background: #F8FAFC;
 }
 .calendar-scroll-wrap {
     overflow-x: auto;
@@ -52,7 +152,7 @@ GLOBAL_STYLES = """
     border-radius: 8px;
     padding: 8px;
     min-height: 90px;
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     background: #FFFFFF;
 }
 .cal-day-today {
@@ -71,29 +171,114 @@ GLOBAL_STYLES = """
 .note-muted { font-size: 0.8rem; color: #64748B; line-height: 1.4; }
 @media (max-width: 768px) {
     .cal-grid { min-width: 640px; }
-    .cal-day { min-height: 72px; font-size: 0.75rem; }
+    .cal-day { min-height: 72px; font-size: 0.78rem; }
+    .hero-card { padding: 20px; }
 }
 </style>
 """
 
-PUBLIC_WELCOME = (
-    "Welcome to the Filam & Pillar community directory — "
-    "a shared space to celebrate and connect with our church family."
-)
+CHART_HOVER_TEMPLATES = {
+    "church_pie": (
+        "<b>%{label}</b> makes up %{percent} of the community "
+        "(%{value} people).<extra></extra>"
+    ),
+    "city_bar": "<b>%{y}</b> has %{x} people in the directory.<extra></extra>",
+    "city_bar_stacked": (
+        "<b>%{y}</b> has %{x} people from %{fullData.name}.<extra></extra>"
+    ),
+    "month_stacked": (
+        "<b>%{x}</b>: %{y} %{fullData.name} celebrations.<extra></extra>"
+    ),
+    "membership_grouped": (
+        "<b>%{x}</b> — %{y} people are %{fullData.name}.<extra></extra>"
+    ),
+    "optin_stacked": (
+        "<b>%{x}</b> — %{y} people are %{fullData.name}.<extra></extra>"
+    ),
+    "household_size": (
+        "<b>%{x}</b> people per household: %{y} households.<extra></extra>"
+    ),
+    "event_timeline": (
+        "<b>%{hovertext}</b> on day %{x} (%{fullData.name}).<extra></extra>"
+    ),
+}
 
 MINOR_PRIVACY_NOTE = (
     "Children's names and birthdays on a parent's record are not shown here. "
     "Adults with their own directory entry may still appear in public views."
 )
 
+PUBLIC_PRIVACY_NOTE = (
+    "Public pages show limited information only — names, churches, and grouped statistics. "
+    "No phone numbers, emails, or home addresses appear here."
+)
+
+PUBLIC_WELCOME_SHORT = "Filam & Pillar community directory — celebrate and connect."
+
+PUBLIC_WELCOME = (
+    "Welcome to the Filam & Pillar community directory — "
+    "a shared space to celebrate and connect with our church family."
+)
+
+NAV_PENDING_KEY = "nav_public_pending"
+
+
+def apply_pending_navigation(nav_key: str = "nav_public") -> None:
+    """Apply a pending sidebar page change before the nav radio widget renders."""
+    pending_key = NAV_PENDING_KEY if nav_key == "nav_public" else f"{nav_key}_pending"
+    pending = st.session_state.pop(pending_key, None)
+    if pending is not None:
+        st.session_state[nav_key] = pending
+
+
+def queue_navigation(page_label: str, nav_key: str = "nav_public") -> None:
+    """Queue a sidebar navigation change for the next run (before widgets render)."""
+    pending_key = NAV_PENDING_KEY if nav_key == "nav_public" else f"{nav_key}_pending"
+    st.session_state[pending_key] = page_label
+
+
+def run_map_geocoding_if_needed(df) -> dict:
+    """Geocode missing map addresses with progress UI. Returns geocode cache."""
+    from helpers import ensure_map_geocoded, geocode_missing_count, load_geocode_cache
+
+    mapped, total = geocode_missing_count(df)
+    if mapped >= total:
+        return load_geocode_cache(warn_on_corrupt=True)
+
+    missing_count = total - mapped
+    progress = st.progress(0)
+    status = st.empty()
+
+    def on_progress(current, total_count, addr, cached=False):
+        progress.progress(current / total_count)
+        label = "cached" if cached else "mapping"
+        status.text(f"{label}: {addr} ({current}/{total_count})")
+
+    with st.spinner(f"Mapping {missing_count} locations (~1 sec each)..."):
+        ok, err = ensure_map_geocoded(df, on_progress)
+
+    progress.empty()
+    status.empty()
+    if not ok:
+        st.session_state["geocode_warning"] = f"Some locations could not be mapped: {err}"
+    return load_geocode_cache(warn_on_corrupt=True)
+
 
 def apply_global_styles():
     st.markdown(GLOBAL_STYLES, unsafe_allow_html=True)
 
 
-def render_page_header(title: str, intro: str, *, show_minor_note: bool = False) -> None:
+def render_page_header(
+    title: str,
+    intro: str,
+    *,
+    question: str | None = None,
+    show_minor_note: bool = False,
+) -> None:
     """Title plus a short how-to-read-this-page caption."""
     st.title(title)
+    if question:
+        st.markdown(f'<p class="viz-question">{html.escape(question)}</p>', unsafe_allow_html=True)
     st.caption(intro)
     if show_minor_note:
         render_minor_privacy_note()
@@ -108,17 +293,65 @@ def render_minor_privacy_note() -> None:
 
 
 def render_public_sidebar_welcome() -> None:
-    st.caption(PUBLIC_WELCOME)
+    st.caption(PUBLIC_WELCOME_SHORT)
 
 
 def render_staff_sidebar_welcome() -> None:
     st.caption(
-        "Staff directory — full records for authorized use. "
-        "Please handle all contact and family information with care."
+        "Staff directory — full contact and family records. "
+        "Please handle all information with care."
     )
 
 
+def render_info_callout(text: str, *, icon: str = "ℹ️", variant: str = "info") -> None:
+    """Friendly highlighted callout box."""
+    cls = "info-callout" if variant == "info" else "info-callout info-callout-warn"
+    st.markdown(
+        f'<div class="{cls}">{icon} {html.escape(text)}</div>',
+        unsafe_allow_html=True,
+    )
+
+
+def render_metric_row(metrics: list[tuple[str, Any, str | None]]) -> None:
+    """Render a row of metrics with optional help tooltips.
+
+    Each item is (label, value, help_text_or_none).
+    """
+    cols = st.columns(len(metrics))
+    for col, (label, value, help_text) in zip(cols, metrics):
+        with col:
+            if help_text:
+                st.metric(label, value, help=help_text)
+            else:
+                st.metric(label, value)
+
+
+def render_viz_card(
+    question: str,
+    caption: str,
+    render_content: Callable[[], None],
+) -> None:
+    """Wrap a visualization with a guiding question and how-to-read caption."""
+    st.markdown(
+        f'<div class="viz-card">'
+        f'<p class="viz-question">{html.escape(question)}</p>'
+        f'<p class="viz-caption">{html.escape(caption)}</p>'
+        f"</div>",
+        unsafe_allow_html=True,
+    )
+    render_content()
+
+
+def apply_hover_sentences(fig, template_key: str) -> None:
+    """Apply a sentence-style Plotly hover template to all traces."""
+    template = CHART_HOVER_TEMPLATES.get(template_key)
+    if template:
+        fig.update_traces(hovertemplate=template)
+
+
 def show_chart(fig, **style_kwargs):
+    if "theme" not in style_kwargs:
+        style_kwargs["theme"] = "light"
     style_figure(fig, **style_kwargs)
     st.plotly_chart(fig, width="stretch")
 
@@ -127,6 +360,63 @@ def church_badge_html(church: str) -> str:
     safe_church = html.escape(str(church or ""))
     color = CHURCH_COLORS.get(church, "#6B7280")
     return f'<span class="church-badge" style="background:{color}">{safe_church}</span>'
+
+
+def render_lookup_table(rows: list[dict]) -> None:
+    """Render a styled HTML table with church badges for name lookup."""
+    if not rows:
+        return
+    parts = [
+        '<table class="lookup-table">',
+        "<thead><tr><th>First Name</th><th>Last Name</th><th>Church</th></tr></thead>",
+        "<tbody>",
+    ]
+    for row in rows:
+        first = html.escape(str(row.get("First_Name", "")))
+        last = html.escape(str(row.get("Last_Name", "")))
+        church = row.get("Church_Affiliation", "")
+        badge = church_badge_html(str(church))
+        parts.append(f"<tr><td>{first}</td><td>{last}</td><td>{badge}</td></tr>")
+    parts.append("</tbody></table>")
+    st.markdown("".join(parts), unsafe_allow_html=True)
+
+
+def render_welcome_hero(
+    title: str,
+    subtitle: str,
+    stats: list[tuple[str, Any, str | None]],
+    quick_links: list[tuple[str, str, str]],
+) -> None:
+    """Hero card with welcome text, stats, and quick-link cards.
+
+    quick_links: list of (page_label, title, description) e.g. ("📊 Overview", ...)
+    """
+    st.markdown(
+        f'<div class="hero-card">'
+        f'<p class="hero-title">{html.escape(title)}</p>'
+        f'<p class="hero-subtitle">{html.escape(subtitle)}</p>'
+        f"</div>",
+        unsafe_allow_html=True,
+    )
+    render_metric_row(stats)
+    st.markdown("#### Explore the directory")
+    cols = st.columns(len(quick_links))
+    for col, (page_label, link_title, link_desc) in zip(cols, quick_links):
+        with col:
+            st.markdown(
+                f'<div class="quick-link-card">'
+                f'<p class="quick-link-title">{html.escape(link_title)}</p>'
+                f'<p class="quick-link-desc">{html.escape(link_desc)}</p>'
+                f"</div>",
+                unsafe_allow_html=True,
+            )
+            st.button(
+                f"Go to {page_label}",
+                key=f"home_link_{page_label}",
+                width="stretch",
+                on_click=queue_navigation,
+                args=(page_label,),
+            )
 
 
 def format_event_day_html(day_events: list, max_visible: int = 3) -> str:
@@ -224,48 +514,68 @@ def render_calendar_overflow(days_with_overflow: dict[int, list]) -> None:
             st.markdown(f"**Day {day_num}:** " + " · ".join(labels), unsafe_allow_html=True)
 
 
-def render_calendar_controls(today: date) -> tuple[int, int]:
+def render_calendar_controls(today: date, *, mode: str = "public") -> tuple[int, int]:
     """Shared month/year navigation controls. Returns (month, year)."""
-    if "cal_month" not in st.session_state:
-        st.session_state.cal_month = today.month
-    if "cal_year" not in st.session_state:
-        st.session_state.cal_year = today.year
+    month_key = f"cal_month_{mode}"
+    year_key = f"cal_year_{mode}"
+    prev_key = f"cal_prev_{mode}"
+    next_key = f"cal_next_{mode}"
+
+    if month_key not in st.session_state:
+        st.session_state[month_key] = today.month
+    if year_key not in st.session_state:
+        st.session_state[year_key] = today.year
 
     c_prev, c_month, c_year, c_next = st.columns([1, 2, 1, 1])
     with c_prev:
-        if st.button("◀ Prev", key="cal_prev"):
-            if st.session_state.cal_month == 1:
-                st.session_state.cal_month = 12
-                st.session_state.cal_year -= 1
+        if st.button("◀ Prev", key=prev_key):
+            if st.session_state[month_key] == 1:
+                st.session_state[month_key] = 12
+                st.session_state[year_key] -= 1
             else:
-                st.session_state.cal_month -= 1
+                st.session_state[month_key] -= 1
             st.rerun()
     with c_month:
         month_idx = st.selectbox(
             "Month",
             range(1, 13),
-            index=st.session_state.cal_month - 1,
+            index=st.session_state[month_key] - 1,
             format_func=lambda m: MONTH_NAMES[m - 1],
             label_visibility="collapsed",
+            key=f"cal_month_select_{mode}",
         )
-        st.session_state.cal_month = month_idx
+        st.session_state[month_key] = month_idx
     with c_year:
-        center = st.session_state.cal_year
-        year_options = list(range(center - 1, center + 2))
+        center = st.session_state[year_key]
+        year_options = list(range(center - 3, center + 4))
         year_idx = st.selectbox(
             "Year",
             year_options,
-            index=year_options.index(st.session_state.cal_year),
+            index=year_options.index(st.session_state[year_key]),
             label_visibility="collapsed",
+            key=f"cal_year_select_{mode}",
         )
-        st.session_state.cal_year = year_idx
+        st.session_state[year_key] = year_idx
     with c_next:
-        if st.button("Next ▶", key="cal_next"):
-            if st.session_state.cal_month == 12:
-                st.session_state.cal_month = 1
-                st.session_state.cal_year += 1
+        if st.button("Next ▶", key=next_key):
+            if st.session_state[month_key] == 12:
+                st.session_state[month_key] = 1
+                st.session_state[year_key] += 1
             else:
-                st.session_state.cal_month += 1
+                st.session_state[month_key] += 1
             st.rerun()
 
-    return st.session_state.cal_month, st.session_state.cal_year
+    return st.session_state[month_key], st.session_state[year_key]
+
+
+def calendar_legend_html(*, include_children: bool = False) -> str:
+    """Plain-language calendar color legend."""
+    parts = [
+        f"<span style='color:{CHURCH_COLORS['Filam']}'>●</span> {church_full_name('Filam')}",
+        f"<span style='color:{CHURCH_COLORS['Pillar']}'>●</span> {church_full_name('Pillar')}",
+        "🎂 Birthday",
+    ]
+    if include_children:
+        parts.append("👶 Child birthday")
+    parts.append("💍 Anniversary")
+    return " &nbsp;&nbsp; ".join(parts)
