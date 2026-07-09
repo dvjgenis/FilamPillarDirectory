@@ -18,6 +18,7 @@ from helpers import (
     audit_data_quality,
     build_church_map_data,
     build_map_data,
+    compute_regional_view_state,
     church_full_name,
     city_church_breakdown,
     csv_mtime,
@@ -37,6 +38,7 @@ from helpers import (
     load_geocode_cache,
     month_event_counts_by_church,
     person_key,
+    prepare_map_frame,
 )
 from views.shared import (
     apply_hover_sentences,
@@ -400,9 +402,9 @@ def page_map(df, households):
             st.dataframe(pd.DataFrame({"Address": out_of_region}), hide_index=True)
 
     cache = load_geocode_cache()
-    map_df = build_map_data(households, cache)
+    map_df = prepare_map_frame(build_map_data(households, cache))
     church_filter_list = None if church_filter == "All" else [church_filter]
-    church_df = build_church_map_data(cache, church_filter_list)
+    church_df = prepare_map_frame(build_church_map_data(cache, church_filter_list))
 
     if church_filter != "All":
         map_df = map_df[map_df["church"] == church_filter]
@@ -420,9 +422,7 @@ def page_map(df, households):
         icon="📍",
     )
 
-    combined = pd.concat([map_df, church_df], ignore_index=True) if not church_df.empty else map_df
-    center_lat = combined["lat"].mean()
-    center_lng = combined["lng"].mean()
+    view_state = compute_regional_view_state(map_df, church_df)
 
     layers = []
     if not map_df.empty:
@@ -482,7 +482,14 @@ def page_map(df, households):
     st.pydeck_chart(
         pdk.Deck(
             layers=layers,
-            initial_view_state=pdk.ViewState(latitude=center_lat, longitude=center_lng, zoom=8, pitch=0),
+            initial_view_state=pdk.ViewState(
+                latitude=view_state["latitude"],
+                longitude=view_state["longitude"],
+                zoom=view_state["zoom"],
+                max_zoom=12,
+                min_zoom=6,
+                pitch=0,
+            ),
             tooltip={
                 "html": (
                     "<b>{members}</b><br/>"

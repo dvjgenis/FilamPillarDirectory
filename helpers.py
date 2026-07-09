@@ -591,6 +591,52 @@ def is_map_display_coordinate(lat: float, lng: float) -> bool:
     )
 
 
+CHICAGO_MAP_CENTER = (41.8781, -87.6298)
+
+
+def prepare_map_frame(df: pd.DataFrame | None) -> pd.DataFrame:
+    """Coerce lat/lng to numbers and drop rows outside the regional map bounds."""
+    if df is None or df.empty:
+        return pd.DataFrame()
+    frame = df.copy()
+    frame["lat"] = pd.to_numeric(frame["lat"], errors="coerce")
+    frame["lng"] = pd.to_numeric(frame["lng"], errors="coerce")
+    valid = frame.dropna(subset=["lat", "lng"])
+    if valid.empty:
+        return valid
+    mask = valid.apply(
+        lambda row: is_map_display_coordinate(row["lat"], row["lng"]),
+        axis=1,
+    )
+    return valid.loc[mask].reset_index(drop=True)
+
+
+def compute_regional_view_state(
+    *frames: pd.DataFrame,
+    default_zoom: float = 8.0,
+) -> dict[str, float]:
+    """Center and zoom the map on in-bounds coordinates only."""
+    import math
+
+    coords: list[tuple[float, float]] = []
+    for frame in frames:
+        prepared = prepare_map_frame(frame)
+        for _, row in prepared.iterrows():
+            coords.append((row["lat"], row["lng"]))
+    if not coords:
+        lat, lng = CHICAGO_MAP_CENTER
+        return {"latitude": lat, "longitude": lng, "zoom": default_zoom}
+    lats = [lat for lat, _ in coords]
+    lngs = [lng for _, lng in coords]
+    center_lat = sum(lats) / len(lats)
+    center_lng = sum(lngs) / len(lngs)
+    lat_span = max(lats) - min(lats)
+    lng_span = max(lngs) - min(lngs)
+    span = max(lat_span, lng_span, 0.08)
+    zoom = max(6.5, min(10.0, 9.2 - math.log2(span / 0.25)))
+    return {"latitude": center_lat, "longitude": center_lng, "zoom": zoom}
+
+
 def out_of_region_geocoded_addresses(
     addresses: list[str],
     geocode_cache: dict,
@@ -646,13 +692,20 @@ def build_church_map_data(
         if churches and church not in churches:
             continue
         geo = geocode_cache.get(address, {})
-        if geo.get("lat") is None:
+        lat, lng = geo.get("lat"), geo.get("lng")
+        if lat is None or lng is None:
+            continue
+        try:
+            lat, lng = float(lat), float(lng)
+        except (TypeError, ValueError):
+            continue
+        if not is_map_display_coordinate(lat, lng):
             continue
         style = CHURCH_MARKER_STYLES.get(church, CHURCH_MARKER_STYLES["Filam"])
         rows.append({
             "address": address,
-            "lat": geo["lat"],
-            "lng": geo["lng"],
+            "lat": lat,
+            "lng": lng,
             "church": church_full_name(church),
             "members": f"⛪ {church_full_name(church)}",
             "label": f"⛪ {church}",

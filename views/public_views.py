@@ -15,6 +15,7 @@ from helpers import (
     MONTH_NAMES,
     build_church_map_data,
     build_public_density_data,
+    compute_regional_view_state,
     church_full_name,
     city_church_breakdown,
     display_value,
@@ -25,6 +26,7 @@ from helpers import (
     get_upcoming_events,
     geocode_missing_count,
     month_event_counts_by_church,
+    prepare_map_frame,
 )
 from views.shared import (
     apply_hover_sentences,
@@ -294,8 +296,8 @@ def page_community_map(aggregate_df, map_df):
 
     cache = run_map_geocoding_if_needed(map_df)
     church_filter_list = None if church_filter == "All" else [church_filter]
-    church_df = build_church_map_data(cache, church_filter_list)
-    density_df = build_public_density_data(map_df, cache, church_filter)
+    church_df = prepare_map_frame(build_church_map_data(cache, church_filter_list))
+    density_df = prepare_map_frame(build_public_density_data(map_df, cache, church_filter))
     mapped, total = geocode_missing_count(map_df)
 
     render_info_callout(
@@ -321,9 +323,7 @@ def page_community_map(aggregate_df, map_df):
             else:
                 st.info("Church buildings are shown. The community heatmap will appear as more areas are mapped.")
 
-        frames = [f for f in (density_df, church_df) if not f.empty]
-        center_lat = pd.concat(frames, ignore_index=True)["lat"].mean()
-        center_lng = pd.concat(frames, ignore_index=True)["lng"].mean()
+        view_state = compute_regional_view_state(density_df, church_df)
 
         layers = []
 
@@ -395,9 +395,9 @@ def page_community_map(aggregate_df, map_df):
             pdk.Deck(
                 layers=layers,
                 initial_view_state=pdk.ViewState(
-                    latitude=center_lat,
-                    longitude=center_lng,
-                    zoom=8,
+                    latitude=view_state["latitude"],
+                    longitude=view_state["longitude"],
+                    zoom=view_state["zoom"],
                     max_zoom=10,
                     min_zoom=6,
                     pitch=0,
