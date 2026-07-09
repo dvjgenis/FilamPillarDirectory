@@ -87,12 +87,20 @@ def get_admin_data(_cache_key: str, _geocode_mtime: float):
 
 
 def _handle_load_error(exc: Exception) -> None:
-    if isinstance(exc, FileNotFoundError):
+    from data_source import format_sheets_load_error
+
+    sheets_message = format_sheets_load_error(exc)
+    if sheets_message:
+        st.error(sheets_message)
+    elif isinstance(exc, FileNotFoundError):
         st.error(str(exc))
     elif isinstance(exc, ValueError):
         st.error(f"Directory data error: {exc}")
+    elif isinstance(exc, RuntimeError) and str(exc):
+        st.error(str(exc))
     else:
-        st.error(f"Failed to load directory data: {exc}")
+        detail = str(exc).strip() or exc.__class__.__name__
+        st.error(f"Failed to load directory data: {detail}")
     st.stop()
 
 

@@ -47,19 +47,41 @@ The app reads from **local CSV** (default) or **Google Sheets** (recommended for
 - **Sample CSV:** `data/sample_directory.csv` (safe fake records for dev)
 - **Geocode cache:** `geocode_cache.json` (gitignored)
 
-### Google Sheets (live updates)
+### Google Sheets (live updates — recommended for deployment)
 
-Use a private Google Sheet as the source of truth. The deployed app refetches every 5 minutes (configurable) and when staff click **Refresh data**.
+Use a **private Google Sheet** as the source of truth. The app refetches every 5 minutes (configurable) and when staff click **Refresh data**. Member data stays out of GitHub.
 
-**Setup:**
+#### Sheet format
 
-1. Create a [Google Cloud service account](https://console.cloud.google.com/iam-admin/serviceaccounts) and download its JSON key
-2. Enable the **Google Sheets API** for the project
-3. Share your directory sheet with the service account email (Viewer access)
-4. Copy `.streamlit/secrets.toml.example` → `.streamlit/secrets.toml` and fill in:
-   - `google_sheets.sheet_id` — from the sheet URL (`/d/SHEET_ID/edit`)
-   - `gcp_service_account` — paste the full JSON fields
-5. On Streamlit Cloud, paste the same values into **App settings → Secrets**
+Row 1 must use the same 15 column headers as the CSV (see `data/sample_directory.csv`). Boolean columns accept `TRUE`/`FALSE`, `Yes`/`No`, etc.
+
+Copy the **Sheet ID** from the URL: `https://docs.google.com/spreadsheets/d/SHEET_ID/edit`
+
+#### Share the sheet
+
+| Who | Permission | Why |
+|-----|------------|-----|
+| Trusted staff who edit the directory | Editor | Maintain records |
+| `filampillardirectory-sa@filampillardirectory.iam.gserviceaccount.com` | **Viewer** | App reads via service account |
+
+#### Local development & secrets
+
+1. Place the service account JSON at `.streamlit/filampillardirectory-cb6db0de17be.json` (gitignored).
+2. Enable **Google Sheets API** on the `filampillardirectory` GCP project.
+3. Sync secrets from the JSON key:
+
+```bash
+make sync-secrets   # writes .streamlit/secrets.toml
+make dev-sheets
+```
+
+`make dev-sheets` runs `sync-secrets` automatically.
+
+#### Streamlit Cloud deployment
+
+1. Run `make sync-secrets` locally.
+2. Copy the entire contents of `.streamlit/secrets.toml` into **Streamlit Cloud → App settings → Secrets**.
+3. Reboot the app.
 
 **Environment variables (alternative to secrets):**
 
@@ -69,9 +91,8 @@ Use a private Google Sheet as the source of truth. The deployed app refetches ev
 | `CHURCH_SHEET_ID` | Google Sheet ID |
 | `CHURCH_SHEET_WORKSHEET` | Tab name (optional; defaults to first tab) |
 | `CHURCH_SHEET_CACHE_TTL` | Seconds between auto-refresh (default `300`) |
-| `GOOGLE_APPLICATION_CREDENTIALS` | Path to service account JSON file |
-
-Keep the same 15 column headers as the CSV. Boolean columns accept `TRUE`/`FALSE`, `Yes`/`No`, etc.
+| `GOOGLE_APPLICATION_CREDENTIALS` | Path to service account JSON (optional override) |
+| `CHURCH_GCP_SERVICE_ACCOUNT_JSON` | Inline service account JSON string |
 
 ### Clean the CSV
 
@@ -110,9 +131,12 @@ Public map aggregates households into ~8–10 mile neighborhood cells and caps z
 | `CHURCH_CSV_PATH` | `Filam_Pillar Church Directory - Main.csv` |
 | `CHURCH_GEOCODE_CACHE_PATH` | `geocode_cache.json` |
 
-Streamlit secrets (optional, for deployment):
+Streamlit secrets (see `.streamlit/secrets.toml.example`):
 
 ```toml
+[google_sheets]
+sheet_id = "your-sheet-id"
+
 [cookie]
 key = "your-random-signing-key"
 ```
