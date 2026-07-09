@@ -23,7 +23,7 @@ from data_source import (
 from helpers import (
     build_admin_events,
     build_events,
-    ensure_church_geocoded,
+    ensure_directory_geocoded,
     geocode_cache_mtime,
     get_public_aggregate_df,
     get_public_map_df,
@@ -60,17 +60,22 @@ st.set_page_config(
 apply_global_styles()
 authenticator = load_authenticator()
 
-try:
-    ensure_church_geocoded()
-except Exception:
-    pass
-
 _CACHE_TTL = sheet_cache_ttl() if uses_google_sheets() else None
 
 
 @st.cache_data(ttl=_CACHE_TTL)
-def get_public_data(_cache_key: str):
+def _load_directory_core(_cache_key: str):
     df = load_and_clean()
+    try:
+        ensure_directory_geocoded(df)
+    except Exception:
+        pass
+    return df
+
+
+@st.cache_data(ttl=_CACHE_TTL)
+def get_public_data(_cache_key: str):
+    df = _load_directory_core(_cache_key)
     events = build_events(df)
     public_events = sanitize_events_for_public(events)
     public_df = get_public_aggregate_df(df)
@@ -80,7 +85,7 @@ def get_public_data(_cache_key: str):
 
 @st.cache_data(ttl=_CACHE_TTL)
 def get_admin_data(_cache_key: str, _geocode_mtime: float):
-    df = load_and_clean()
+    df = _load_directory_core(_cache_key)
     households = group_households(df)
     events = build_admin_events(df)
     return df, households, events

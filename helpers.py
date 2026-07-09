@@ -358,11 +358,33 @@ def load_geocode_cache(*, warn_on_corrupt: bool = False) -> dict:
         return {}
 
 
-def ensure_church_geocoded() -> None:
-    """Pre-geocode church building addresses so public maps always show markers."""
-    addresses = get_church_addresses()
+def collect_directory_addresses(df: pd.DataFrame | None = None) -> list[str]:
+    """Unique church + household addresses used on directory maps."""
+    addresses = set(get_church_addresses())
+    if df is not None and "Home_Address" in df.columns:
+        for address in df["Home_Address"].dropna().unique():
+            if display_value(address) != "Not available":
+                addresses.add(address)
+    return sorted(addresses)
+
+
+def ensure_directory_geocoded(df: pd.DataFrame) -> None:
+    """Pre-geocode church and household addresses so maps work without manual steps."""
+    addresses = collect_directory_addresses(df)
     cache = load_geocode_cache()
     missing = [a for a in addresses if a not in cache or cache[a].get("lat") is None]
+    if not missing:
+        return
+    geocode_addresses(missing)
+
+
+def ensure_church_geocoded() -> None:
+    """Pre-geocode church building addresses only (no directory data required)."""
+    cache = load_geocode_cache()
+    missing = [
+        a for a in get_church_addresses()
+        if a not in cache or cache[a].get("lat") is None
+    ]
     if not missing:
         return
     geocode_addresses(missing)

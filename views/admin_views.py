@@ -26,7 +26,7 @@ from helpers import (
     filter_people,
     format_phone,
     geocode_addresses,
-    get_church_addresses,
+    collect_directory_addresses,
     get_events_for_month,
     get_today_events,
     get_upcoming_events,
@@ -313,10 +313,7 @@ def page_map(df, households):
         "dot size reflects household size. Gold markers are church buildings.",
     )
 
-    addresses = sorted(
-        set(a for a in df["Home_Address"].dropna().unique() if display_value(a) != "Not available")
-        | set(get_church_addresses())
-    )
+    addresses = collect_directory_addresses(df)
 
     with st.sidebar.expander("Map filters", expanded=True):
         church_filter = st.radio("Show churches", ["All", "Filam", "Pillar"], horizontal=True, key="adm_map_church")
@@ -330,8 +327,9 @@ def page_map(df, households):
 
     if missing:
         st.warning(
-            f"**{len(missing)}** address(es) need geocoding. "
-            "This runs once and is cached locally (~1 sec per address)."
+            f"**{len(missing)}** address(es) could not be mapped yet. "
+            "New addresses are geocoded automatically when data loads (~1 sec per address). "
+            "Try **Refresh data** in the sidebar, or geocode manually below."
         )
         geo_col1, geo_col2 = st.columns(2)
         with geo_col1:
@@ -381,7 +379,7 @@ def page_map(df, households):
         map_df = map_df[map_df["church"] == church_filter]
 
     if map_df.empty and church_df.empty:
-        st.info("No geocoded locations yet. Click the button above to geocode.")
+        st.info("No geocoded locations yet. Reload the app or use **Refresh data** to geocode addresses.")
         return
 
     if map_df.empty and not church_df.empty:
@@ -614,10 +612,7 @@ def page_calendar(df, events):
 def _render_data_quality_section(df, households) -> None:
     issues = audit_data_quality(df)
     cache = load_geocode_cache()
-    addresses = sorted(
-        set(a for a in df["Home_Address"].dropna().unique() if display_value(a) != "Not available")
-        | set(get_church_addresses())
-    )
+    addresses = collect_directory_addresses(df)
     mapped, total = _geocode_coverage(addresses, cache)
     csv_modified = "Unknown"
     if CSV_PATH.exists():
