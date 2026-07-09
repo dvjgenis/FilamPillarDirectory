@@ -29,6 +29,21 @@ def _toml_value(value: str) -> str:
     return json.dumps(value)
 
 
+def _admin_credentials_section() -> list[str]:
+    if not ADMIN_CREDS.exists():
+        return []
+    with open(ADMIN_CREDS, "rb") as f:
+        admin = tomllib.load(f)
+    lines = ["", "# Staff login (bcrypt hash — paste into Streamlit Cloud secrets too)"]
+    for username, user in admin.get("credentials", {}).get("usernames", {}).items():
+        lines.append("")
+        lines.append(f"[credentials.usernames.{username}]")
+        lines.append(f"email = {_toml_value(str(user.get('email', '')))}")
+        lines.append(f"name = {_toml_value(str(user.get('name', '')))}")
+        lines.append(f"password = {_toml_value(str(user.get('password', '')))}")
+    return lines
+
+
 def build_secrets_toml(key_path: Path, sheet_id: str) -> str:
     sa = json.loads(key_path.read_text(encoding="utf-8"))
     required = (
@@ -59,6 +74,7 @@ def build_secrets_toml(key_path: Path, sheet_id: str) -> str:
     for field in required:
         lines.append(f"{field} = {_toml_value(str(sa[field]))}")
 
+    lines.extend(_admin_credentials_section())
     lines.extend(
         [
             "",

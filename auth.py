@@ -41,10 +41,34 @@ def _resolve_credentials_path() -> Path | None:
 
 
 def credentials_missing() -> bool:
+    try:
+        import streamlit as st
+
+        if st.secrets.get("credentials"):
+            return False
+    except Exception:
+        pass
     return not CREDENTIALS_PATH.exists()
 
 
+def _config_from_secrets() -> dict | None:
+    try:
+        import streamlit as st
+
+        credentials = st.secrets.get("credentials")
+        cookie = st.secrets.get("cookie")
+        if credentials and cookie:
+            return {"credentials": dict(credentials), "cookie": dict(cookie)}
+    except Exception:
+        pass
+    return None
+
+
 def load_auth_config() -> dict:
+    secrets_config = _config_from_secrets()
+    if secrets_config is not None:
+        return secrets_config
+
     path = _resolve_credentials_path()
     if path is None:
         raise FileNotFoundError(
@@ -55,12 +79,12 @@ def load_auth_config() -> dict:
 
 
 def load_authenticator() -> stauth.Authenticate | None:
-    """Load credentials from TOML and return a configured authenticator."""
-    path = _resolve_credentials_path()
-    if path is None:
+    """Load credentials from Streamlit secrets or TOML file."""
+    try:
+        config = load_auth_config()
+    except FileNotFoundError:
         return None
 
-    config = load_auth_config()
     cookie_key = config["cookie"]["key"]
     try:
         cookie_key = st.secrets["cookie"]["key"]
