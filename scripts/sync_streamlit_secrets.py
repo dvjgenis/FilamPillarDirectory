@@ -75,11 +75,22 @@ def build_secrets_toml(key_path: Path, sheet_id: str) -> str:
         lines.append(f"{field} = {_toml_value(str(sa[field]))}")
 
     lines.extend(_admin_credentials_section())
+
+    cookie_name = "church_directory_cookie"
+    cookie_expiry = 1
+    if ADMIN_CREDS.exists():
+        with open(ADMIN_CREDS, "rb") as f:
+            admin = tomllib.load(f)
+        cookie_name = str(admin.get("cookie", {}).get("name", cookie_name))
+        cookie_expiry = int(admin.get("cookie", {}).get("expiry_days", cookie_expiry))
+
     lines.extend(
         [
             "",
             "[cookie]",
+            f"expiry_days = {cookie_expiry}",
             f"key = {_toml_value(_cookie_key())}",
+            f"name = {_toml_value(cookie_name)}",
             "",
         ]
     )

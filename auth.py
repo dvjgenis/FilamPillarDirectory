@@ -51,14 +51,25 @@ def credentials_missing() -> bool:
     return not CREDENTIALS_PATH.exists()
 
 
+def _normalize_cookie(cookie: dict) -> dict:
+    """Ensure cookie has the fields streamlit-authenticator requires."""
+    return {
+        "expiry_days": int(cookie.get("expiry_days", 1)),
+        "key": str(cookie.get("key", PLACEHOLDER_COOKIE_KEY)),
+        "name": str(cookie.get("name", "church_directory_cookie")),
+    }
+
+
 def _config_from_secrets() -> dict | None:
     try:
-        import streamlit as st
-
         credentials = st.secrets.get("credentials")
         cookie = st.secrets.get("cookie")
-        if credentials and cookie:
-            return {"credentials": dict(credentials), "cookie": dict(cookie)}
+        # Staff login on Streamlit Cloud requires the credentials block.
+        if credentials and cookie and cookie.get("key"):
+            return {
+                "credentials": dict(credentials),
+                "cookie": _normalize_cookie(dict(cookie)),
+            }
     except Exception:
         pass
     return None
@@ -75,7 +86,9 @@ def load_auth_config() -> dict:
             "No admin credentials found. Run: python scripts/setup_admin.py"
         )
     with open(path, "rb") as f:
-        return tomllib.load(f)
+        config = tomllib.load(f)
+    config["cookie"] = _normalize_cookie(dict(config.get("cookie", {})))
+    return config
 
 
 def load_authenticator() -> stauth.Authenticate | None:
@@ -85,17 +98,12 @@ def load_authenticator() -> stauth.Authenticate | None:
     except FileNotFoundError:
         return None
 
-    cookie_key = config["cookie"]["key"]
-    try:
-        cookie_key = st.secrets["cookie"]["key"]
-    except (KeyError, FileNotFoundError, AttributeError):
-        pass
-
+    cookie = config["cookie"]
     return stauth.Authenticate(
         config["credentials"],
-        config["cookie"]["name"],
-        cookie_key,
-        config["cookie"]["expiry_days"],
+        cookie["name"],
+        cookie["key"],
+        cookie["expiry_days"],
     )
 
 
