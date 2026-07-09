@@ -9,7 +9,19 @@ from typing import Any
 
 import streamlit as st
 
-from helpers import CHURCH_COLORS, MONTH_NAMES, church_full_name, event_icon, month_calendar_grid, style_figure
+import pydeck as pdk
+
+from helpers import (
+    CHURCH_COLORS,
+    MONTH_NAMES,
+    REGIONAL_MAP_MAX_ZOOM_ADMIN,
+    REGIONAL_MAP_MAX_ZOOM_PUBLIC,
+    REGIONAL_MAP_MIN_ZOOM,
+    church_full_name,
+    event_icon,
+    month_calendar_grid,
+    style_figure,
+)
 
 GLOBAL_STYLES = """
 <style>
@@ -235,6 +247,33 @@ def queue_navigation(page_label: str, nav_key: str = "nav_public") -> None:
     """Queue a sidebar navigation change for the next run (before widgets render)."""
     pending_key = NAV_PENDING_KEY if nav_key == "nav_public" else f"{nav_key}_pending"
     st.session_state[pending_key] = page_label
+
+
+def build_regional_deck_view(
+    view_state: dict[str, float],
+    *,
+    max_zoom: float = REGIONAL_MAP_MAX_ZOOM_PUBLIC,
+) -> tuple[pdk.ViewState, list[pdk.View]]:
+    """Return ViewState + MapView controller with enforced regional zoom limits."""
+    zoom = min(max(view_state["zoom"], REGIONAL_MAP_MIN_ZOOM), max_zoom)
+    initial_view_state = pdk.ViewState(
+        latitude=view_state["latitude"],
+        longitude=view_state["longitude"],
+        zoom=zoom,
+        min_zoom=REGIONAL_MAP_MIN_ZOOM,
+        max_zoom=max_zoom,
+        pitch=0,
+    )
+    views = [
+        pdk.View(
+            type="MapView",
+            controller={
+                "minZoom": REGIONAL_MAP_MIN_ZOOM,
+                "maxZoom": max_zoom,
+            },
+        )
+    ]
+    return initial_view_state, views
 
 
 def run_map_geocoding_if_needed(df) -> dict:

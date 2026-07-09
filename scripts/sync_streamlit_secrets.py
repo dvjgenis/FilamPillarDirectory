@@ -9,10 +9,12 @@ import tomllib
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
 STREAMLIT_DIR = ROOT / ".streamlit"
 DEFAULT_KEY = STREAMLIT_DIR / "filampillardirectory-cb6db0de17be.json"
 SECRETS_OUT = STREAMLIT_DIR / "secrets.toml"
 ADMIN_CREDS = ROOT / "admin_credentials.toml"
+GEOCODE_CACHE = ROOT / "geocode_cache.json"
 
 SHEET_ID = "1n8RTS7LudL23fG9zpc43sPN-IY1WxQt0RZCesTV5iqs"
 
@@ -27,6 +29,41 @@ def _cookie_key() -> str:
 
 def _toml_value(value: str) -> str:
     return json.dumps(value)
+
+
+def _geocode_cache_section() -> list[str]:
+    if not GEOCODE_CACHE.exists():
+        return [
+            "",
+            "# Geocode cache: run `make pregeocode` then `make sync-secrets` to embed map coordinates.",
+        ]
+    from helpers import is_map_display_coordinate
+
+    cache = json.loads(GEOCODE_CACHE.read_text(encoding="utf-8"))
+    mapped = {}
+    for address, geo in cache.items():
+        lat, lng = geo.get("lat"), geo.get("lng")
+        if lat is None or lng is None:
+            continue
+        try:
+            lat_f, lng_f = float(lat), float(lng)
+        except (TypeError, ValueError):
+            continue
+        if not is_map_display_coordinate(lat_f, lng_f):
+            continue
+        mapped[address] = {"lat": lat_f, "lng": lng_f}
+    if not mapped:
+        return ["", "# Geocode cache file exists but has no mapped addresses yet."]
+    lines = [
+        "",
+        "# Geocode cache — required on Streamlit Cloud so maps load without live geocoding.",
+        "[geocode_cache]",
+    ]
+    for address, geo in sorted(mapped.items()):
+        lines.append(
+            f"{_toml_value(address)} = {{ lat = {geo['lat']}, lng = {geo['lng']} }}"
+        )
+    return lines
 
 
 def _admin_credentials_section() -> list[str]:
@@ -91,9 +128,10 @@ def build_secrets_toml(key_path: Path, sheet_id: str) -> str:
             f"expiry_days = {cookie_expiry}",
             f"key = {_toml_value(_cookie_key())}",
             f"name = {_toml_value(cookie_name)}",
-            "",
         ]
     )
+    lines.extend(_geocode_cache_section())
+    lines.append("")
     return "\n".join(lines)
 
 
@@ -109,6 +147,10 @@ def main() -> int:
     print(f"Service account: {sa['client_email']}")
     print("Share your Google Sheet with that email (Viewer) if you have not already.")
     print("Paste the same contents into Streamlit Cloud → App settings → Secrets.")
+    if GEOCODE_CACHE.exists():
+        print("Includes [geocode_cache] — maps work immediately after saving secrets and rebooting.")
+    else:
+        print("Run `make pregeocode` then `make sync-secrets` to add [geocode_cache] for Cloud maps.")
     return 0
 
 

@@ -364,12 +364,12 @@ def load_geocode_cache(*, warn_on_corrupt: bool = False) -> dict:
     """Load geocode cache from secrets bootstrap, then overlay local file."""
     cache = _load_secrets_geocode_cache()
     if not GEOCODE_CACHE_PATH.exists():
-        return cache
+        return _overlay_runtime_geocode_cache(cache)
     try:
         with open(GEOCODE_CACHE_PATH) as f:
             file_cache = json.load(f)
         cache.update(file_cache)
-        return cache
+        return _overlay_runtime_geocode_cache(cache)
     except json.JSONDecodeError:
         if warn_on_corrupt:
             import streamlit as st
@@ -378,7 +378,22 @@ def load_geocode_cache(*, warn_on_corrupt: bool = False) -> dict:
                 "Geocode cache file was corrupt and has been reset. "
                 "Re-run geocoding from the Household Map page."
             )
-        return cache
+        return _overlay_runtime_geocode_cache(cache)
+
+
+def _overlay_runtime_geocode_cache(cache: dict) -> dict:
+    """Merge in-memory geocodes when Cloud cannot persist cache files."""
+    try:
+        import streamlit as st
+
+        runtime = st.session_state.get("geocode_cache_runtime")
+        if isinstance(runtime, dict) and runtime:
+            merged = dict(cache)
+            merged.update(runtime)
+            return merged
+    except Exception:
+        pass
+    return cache
 
 
 def collect_directory_addresses(df: pd.DataFrame | None = None) -> list[str]:
@@ -392,8 +407,16 @@ def collect_directory_addresses(df: pd.DataFrame | None = None) -> list[str]:
 
 
 def _save_geocode_cache(cache: dict) -> None:
-    with open(GEOCODE_CACHE_PATH, "w") as f:
-        json.dump(cache, f, indent=2)
+    try:
+        with open(GEOCODE_CACHE_PATH, "w") as f:
+            json.dump(cache, f, indent=2)
+    except OSError:
+        try:
+            import streamlit as st
+
+            st.session_state["geocode_cache_runtime"] = dict(cache)
+        except Exception:
+            pass
 
 
 def geocode_missing_count(df: pd.DataFrame | None) -> tuple[int, int]:
@@ -592,6 +615,10 @@ def is_map_display_coordinate(lat: float, lng: float) -> bool:
 
 
 CHICAGO_MAP_CENTER = (41.8781, -87.6298)
+MAP_BUILD_ID = "regional-zoom-limits"
+REGIONAL_MAP_MIN_ZOOM = 7.0
+REGIONAL_MAP_MAX_ZOOM_PUBLIC = 10.0
+REGIONAL_MAP_MAX_ZOOM_ADMIN = 11.0
 
 
 def prepare_map_frame(df: pd.DataFrame | None) -> pd.DataFrame:
@@ -633,7 +660,7 @@ def compute_regional_view_state(
     lat_span = max(lats) - min(lats)
     lng_span = max(lngs) - min(lngs)
     span = max(lat_span, lng_span, 0.08)
-    zoom = max(6.5, min(10.0, 9.2 - math.log2(span / 0.25)))
+    zoom = max(REGIONAL_MAP_MIN_ZOOM, min(REGIONAL_MAP_MAX_ZOOM_PUBLIC, 9.2 - math.log2(span / 0.25)))
     return {"latitude": center_lat, "longitude": center_lng, "zoom": zoom}
 
 

@@ -90,7 +90,7 @@ def test_compute_regional_view_state_ignores_outliers():
     view = compute_regional_view_state(chicagoland, outlier)
     assert 41.0 < view["latitude"] < 42.0
     assert -89.0 < view["longitude"] < -87.0
-    assert view["zoom"] >= 6.5
+    assert view["zoom"] >= 7.0
 
 
 def test_compute_regional_view_state_falls_back_to_chicago():

@@ -12,6 +12,7 @@ import streamlit as st
 
 from helpers import (
     CHURCH_COLORS,
+    MAP_BUILD_ID,
     MONTH_NAMES,
     build_church_map_data,
     build_public_density_data,
@@ -30,6 +31,7 @@ from helpers import (
 )
 from views.shared import (
     apply_hover_sentences,
+    build_regional_deck_view,
     calendar_legend_html,
     calendar_overflow_by_day,
     PUBLIC_PRIVACY_NOTE,
@@ -293,6 +295,7 @@ def page_community_map(aggregate_df, map_df):
     with st.sidebar.expander("Map filters", expanded=True):
         church_filter = st.radio("Show churches", ["All", "Filam", "Pillar"], horizontal=True, key="pub_map_church")
         st.caption("The filter applies to both the map and the city chart below.")
+        st.caption(f"Map build: {MAP_BUILD_ID}")
 
     cache = run_map_geocoding_if_needed(map_df)
     church_filter_list = None if church_filter == "All" else [church_filter]
@@ -324,6 +327,7 @@ def page_community_map(aggregate_df, map_df):
                 st.info("Church buildings are shown. The community heatmap will appear as more areas are mapped.")
 
         view_state = compute_regional_view_state(density_df, church_df)
+        initial_view_state, map_views = build_regional_deck_view(view_state)
 
         layers = []
 
@@ -394,14 +398,8 @@ def page_community_map(aggregate_df, map_df):
         st.pydeck_chart(
             pdk.Deck(
                 layers=layers,
-                initial_view_state=pdk.ViewState(
-                    latitude=view_state["latitude"],
-                    longitude=view_state["longitude"],
-                    zoom=view_state["zoom"],
-                    max_zoom=10,
-                    min_zoom=6,
-                    pitch=0,
-                ),
+                views=map_views,
+                initial_view_state=initial_view_state,
                 tooltip={
                     "html": "<b>{members}</b><br/>This is one of our church buildings.",
                     "style": {"backgroundColor": "#1f2937", "color": "white"},

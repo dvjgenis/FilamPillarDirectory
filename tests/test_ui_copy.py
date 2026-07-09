@@ -6,6 +6,7 @@ from views.shared import (
     CHART_HOVER_TEMPLATES,
     PUBLIC_WELCOME_SHORT,
     apply_hover_sentences,
+    build_regional_deck_view,
     calendar_legend_html,
 )
 
@@ -77,3 +78,15 @@ def test_apply_pending_navigation_key_mapping():
 def test_map_bounds_still_exclude_philippines():
     assert is_map_display_coordinate(41.9, -87.7) is True
     assert is_map_display_coordinate(9.31, 123.31) is False
+
+
+def test_build_regional_deck_view_enforces_zoom_limits():
+    view_state, map_views = build_regional_deck_view(
+        {"latitude": 41.8, "longitude": -87.6, "zoom": 3.0},
+        max_zoom=11.0,
+    )
+    assert view_state.zoom == 7.0
+    assert view_state.min_zoom == 7.0
+    assert view_state.max_zoom == 11.0
+    assert map_views[0].controller["minZoom"] == 7.0
+    assert map_views[0].controller["maxZoom"] == 11.0

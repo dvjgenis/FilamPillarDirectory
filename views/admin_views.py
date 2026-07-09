@@ -15,6 +15,7 @@ from helpers import (
     CHURCH_COLORS,
     CSV_PATH,
     MONTH_NAMES,
+    REGIONAL_MAP_MAX_ZOOM_ADMIN,
     audit_data_quality,
     build_church_map_data,
     build_map_data,
@@ -42,6 +43,7 @@ from helpers import (
 )
 from views.shared import (
     apply_hover_sentences,
+    build_regional_deck_view,
     calendar_legend_html,
     calendar_overflow_by_day,
     church_badge_html,
@@ -423,6 +425,10 @@ def page_map(df, households):
     )
 
     view_state = compute_regional_view_state(map_df, church_df)
+    initial_view_state, map_views = build_regional_deck_view(
+        view_state,
+        max_zoom=REGIONAL_MAP_MAX_ZOOM_ADMIN,
+    )
 
     layers = []
     if not map_df.empty:
@@ -482,14 +488,8 @@ def page_map(df, households):
     st.pydeck_chart(
         pdk.Deck(
             layers=layers,
-            initial_view_state=pdk.ViewState(
-                latitude=view_state["latitude"],
-                longitude=view_state["longitude"],
-                zoom=view_state["zoom"],
-                max_zoom=12,
-                min_zoom=6,
-                pitch=0,
-            ),
+            views=map_views,
+            initial_view_state=initial_view_state,
             tooltip={
                 "html": (
                     "<b>{members}</b><br/>"
