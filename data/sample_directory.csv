@@ -1,0 +1,7 @@
+Church_Affiliation,First_Name,Last_Name,Birthday,Home_Address,Phone_Number,Email_Address,Wedding_Anniversary,Spouse_Name,Spouse_Birthday,Spouse_Phone,Children_Names,Children_Birthdays,Is_Member,Opt_In_Announcements
+Filam,Alex,Sample,01/15,"100 Demo St, Chicago, IL 60601",3125550101,alex.sample@example.com,06/20,Jordan Sample,08/03,3125550102,"Sam, Riley","04/10, 11/22",TRUE,TRUE
+Filam,Jordan,Sample,08/03,"100 Demo St, Chicago, IL 60601",3125550102,jordan.sample@example.com,06/20,Alex Sample,01/15,3125550101,"Sam, Riley","04/10, 11/22",TRUE,FALSE
+Pillar,Morgan,Example,03/25,"200 Test Ave, Naperville, IL 60540",6305550201,morgan.example@example.com,,,,,,,TRUE,TRUE
+Pillar,Taylor,Example,07/14,"300 Place Rd, Aurora, IL 60504",6305550301,taylor.example@example.com,09/01,Casey Example,12/01,6305550302,Quinn,05/05,TRUE,TRUE
+Pillar,Casey,Example,12/01,"300 Place Rd, Aurora, IL 60504",6305550302,casey.example@example.com,09/01,Taylor Example,07/14,6305550301,Quinn,05/05,FALSE,TRUE
+Filam,Riley,Guest,11/30,"400 Guest Ln, Chicago, IL 60618",3125550401,,,,,,,,FALSE,FALSE

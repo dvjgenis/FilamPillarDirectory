@@ -1,0 +1,1038 @@
+Church_Affiliation,First_Name,Last_Name,Birthday,Home_Address,Phone_Number,Email_Address,Wedding_Anniversary,Spouse_Name,Spouse_Birthday,Spouse_Phone,Children_Names,Children_Birthdays,Is_Member,Opt_In_Announcements
+Filam,Nelson,Acain,02/05,"4146 N Meade Ave, Chicago, IL 60634",7737589040,neltina1@gmail.com,03/18,Tina Acain,03/12,7737588406,"Andrea, Aurea","12/06, 06/18",TRUE,TRUE
+Filam,Tina,Acain,03/12,"4146 N Meade Ave, Chicago, IL 60634",7737588406,neltina1@gmail.com,03/18,Nelson Acain,02/05,7737589040,"Andrea, Aurea","12/06, 06/18",TRUE,TRUE
+Filam,Aurea,Acain,06/18,"4146 N Meade Ave, Chicago, IL 60634",7735582339,acainaurea3@gmail.com,,,,,,,TRUE,TRUE
+Filam,Andrea,Acain,12/06,"4146 N Meade Ave, Chicago, IL 60634",7735582308,andreajacain@gmail.com,,,,,,,TRUE,TRUE
+Filam,Ruel (Pastor),Akut,07/15,"5253 W Byron St, Chicago, IL 60641",7737045006,jvakut@yahoo.com,10/21,,,,,,TRUE,TRUE
+Filam,Jocelyn,Akut,08/25,"5253 W Byron St, Chicago, IL 60641",7737045005,jvakut@yahoo.com,10/21,,,,,,TRUE,TRUE
+Filam,Kris Paolo (Pastor),Akut,09/21,"5253 W Byron St, Chicago, IL 60641",7737045007,kpvakut21@gmail.com,10/16,,,,,,TRUE,TRUE
+Filam,Shekinah,Akut,11/16,"5253 W Byron St, Chicago, IL 60641",3129754371,sheksinon@gmail.com,10/16,,,,,,TRUE,TRUE
+Pillar,Electry,Baguio,01/05,"3633 Farnsworth Dr, West Lafayette, IN 47906",7654138083,electry05@yahoo.com,,,,,,,FALSE,FALSE
+Filam,Lyonel Polde,Baguio,08/30,"183 E River Rd, Unit F6, Des Plaines, IL 60016",7738887710,hary8t@gmail.com,06/29,Harriet Baguio,03/17,7738076760,Casey Shane,03/06,TRUE,TRUE
+Filam,Harriet,Baguio,09/06,"183 E River Rd, Unit F6, Des Plaines, IL 60016",7738076760,hary8t@gmail.com,06/29,Lyonel Polde Baguio,03/13,7738887710,Casey Shane,03/06,TRUE,TRUE
+Filam,Sheila,Baguio-Ceniza,09/08,"6961 N Oakley Ave, Unit 403, Chicago, IL 60645",7739928457,stbaguio@gmail.com,10/15,Jared Ceniza,12/17,8474529968,"Eila, Aria","09/25, 05/08",TRUE,TRUE
+Filam,Myra Joyce,Barcena,03/17,"1421 Sherwood Ct, Gurnee, IL 60031",2243920562,barcenamyrajoyce@gmail.com,12/28,Cyril Heinz Bata,08/04,,Dara Mariela Barcena Laneman,09/08,FALSE,TRUE
+Filam,Kell Sherwin,Basillo,01/02,"9255 N Kenneth Ave, Skokie, IL 60076",7739713436,pohpih13@hotmail.com,05/17,Joan Basillo,10/19,7735745626,"Kylle, Danielle, Anaiah","11/13, 02/25, 07/13",TRUE,TRUE
+Filam,Danielle,Basillo,02/25,"9255 N Kenneth Ave, Skokie, IL 60076",2248309893,,,,,,,,TRUE,FALSE
+Filam,Sherwin Bill,Basillo,03/11,"2935 N Parkside Ave, Chicago, IL 60634",6302693304,mahal3ki75@yahoo.com,05/31,Joann T. Basillo,05/09,3507502278,"Matt Ryann, Cyntia","10/10, 07/07",TRUE,TRUE
+Filam,Joann,Basillo,05/09,"2935 N Parkside Ave, Chicago, IL 60634",3507502278,basilloj@yahoo.com,05/31,Sherwin Bill Basillo,03/11,6302693304,"Matt Ryann, Cyntia","10/10, 07/07",TRUE,TRUE
+Filam,Matt Ryann,Basillo,10/10,"2935 N Parkside Ave, Chicago, IL 60634",3124853234,mattbasil07@gmail.com,,,,,,,TRUE,FALSE
+Filam,Joan,Basillo,10/19,"9255 N Kenneth Ave, Skokie, IL 60076",7735745626,alviarjoan@hotmail.com,05/17,Kell Sherwin Basillo,01/02,7739713436,"Kylle, Danielle, Anaiah","11/13, 02/25, 07/13",TRUE,TRUE
+Filam,Kylle,Basillo,11/13,"9255 N Kenneth Ave, Skokie, IL 60076",,kabasillo2170@gmail.com,,,,,,,TRUE,FALSE
+Pillar,Miserere,Benliro,01/02,"1404 Aster Ln, Bolingbrook, IL 60490",6308631335,benliromiserere@gmail.com,04/29,,,,,,TRUE,TRUE
+Pillar,Yoel Jaiden,Benliro,01/06,"227 S Cranberry St, Bolingbrook, IL 60490",6306322233,yoeljb@icloud.com,,,,,,,TRUE,TRUE
+Pillar,Humberto,Benliro,02/02,"1404 Aster Ln, Bolingbrook, IL 60490",6308634466,,04/29,,,,,,TRUE,TRUE
+Pillar,Dax,Benliro,04/09,"227 S Cranberry St, Bolingbrook, IL 60490",6308024267,daxt7007benliro@yahoo.com,04/19,,,,,,TRUE,TRUE
+Pillar,Drex Yohan,Benliro,05/02,"227 S Cranberry St, Bolingbrook, IL 60490",6307591191,,,,,,,,FALSE,FALSE
+Pillar,Ceres,Benliro,10/22,"227 S Cranberry St, Bolingbrook, IL 60490",7737049044,ritzferrariz@yahoo.com,04/19,,,,,,TRUE,TRUE
+Pillar,Barbara,Blissett,02/17,"328 Hickory Ave, Romeoville, IL 60446",8153255659,blblissett@gmail.com,08/14,,,,,,TRUE,TRUE
+Pillar,Brad,Blissett,07/23,"328 Hickory Ave, Romeoville, IL 60446",8153254248,bblissett@comcast.net,08/14,,,,,,TRUE,TRUE
+Filam,Mercedes,Briones,02/18,"231 Hickory Dr, Crystal Lake, IL 60014",2245201086,,,Fidelito Briones,03/06,8473408534,"Aldren, Auren",,TRUE,TRUE
+Filam,Fidelito,Briones,03/06,"231 Hickory Dr, Crystal Lake, IL 60014",8473408534,,,Mercedes Briones,02/18,2245201086,"Aldren, Auren",,TRUE,TRUE
+Filam,Aldren Stephen,Briones,,"231 Hickory Dr, Crystal Lake, IL 60014",8473408804,,,,,,,,FALSE,FALSE
+Filam,Auren Grace,Briones,,"231 Hickory Dr, Crystal Lake, IL 60014",,,,,,,,,FALSE,FALSE
+Pillar,Diamond,Briz,02/10,"16542 S Sun Mdw Dr, Lockport, IL 60441",7086777826,dianecarl0819@gmail.com,12/12,,,,,,FALSE,FALSE
+Pillar,Leonhardt Spring,Briz,03/22,"16542 S Sun Mdw Dr, Lockport, IL 60441",7086777826,dianecarl0819@gmail.com,,,,,,,FALSE,FALSE
+Pillar,Rinoa Summer,Briz,06/15,"16542 S Sun Mdw Dr, Lockport, IL 60441",7086777826,dianecarl0819@gmail.com,,,,,,,FALSE,FALSE
+Pillar,Tifa Autumn,Briz,08/05,"16542 S Sun Mdw Dr, Lockport, IL 60441",7086777826,dianecarl0819@gmail.com,,,,,,,FALSE,FALSE
+Pillar,Carlo Roy,Briz,09/16,"16542 S Sun Mdw Dr, Lockport, IL 60441",7083079074,dianecarl0819@gmail.com,12/11,,,,,,FALSE,FALSE
+Pillar,Freya Winter,Briz,11/26,"16542 S Sun Mdw Dr, Lockport, IL 60441",7086777826,dianecarl0819@gmail.com,,,,,,,FALSE,FALSE
+Pillar,Emerald Benliro,Cachero,01/27,"716 S Weber Rd, Unit 520, Romeoville, IL 60446",6308636328,lycazee_27@yahoo.com,03/10,,,,,,TRUE,TRUE
+Pillar,Albert John,Cachero,02/23,"716 S Weber Rd, Unit 520, Romeoville, IL 60446",6308630775,ajcachero@ymail.com,03/10,,,,,,TRUE,TRUE
+Pillar,Adria,Cachero,03/27,"716 S Weber Rd, Unit 520, Romeoville, IL 60446",6308636328,,,,,,,,FALSE,FALSE
+Pillar,Praise Isla,Cachero,06/02,"716 S Weber Rd, Unit 520, Romeoville, IL 60446",6308636328,,,,,,,,FALSE,FALSE
+Pillar,Charles,Calille,01/10,"778 Bellevue Cir, Oswego, IL 60543",3315751484,ccalille@gmail.com,,,,,,,FALSE,FALSE
+Pillar,Noemi (Maria),Calille,07/14,"778 Bellevue Cir, Oswego, IL 60543",6308542097,hycinthmarie@yahoo.com,,,,,,,TRUE,TRUE
+Pillar,Zarria,Carter,03/26,"734 N Emroy Ave, Elmhurst, IL 60126",6302343469,,,,,,,,TRUE,TRUE
+Filam,Rebecca,Castro,08/01,"5435 N Neva Ave, Chicago, IL 60656",7736205472,,,Rufino Castro,06/23,,Celina,,FALSE,TRUE
+Filam,April Grace,Catacutan,10/13,"484 W Hickory St, Chicago Heights, IL 60411",7082538427,aprilcatacutan1999@gmail.com,,,,,,,FALSE,TRUE
+Filam,David,Catanus,01/01,"39203 N Ogden Ln, Beach Park, IL 60083",2245220251,david.catanus0101@gmail.com,,,,,,,FALSE,FALSE
+Filam,Matthew,Catanus,02/21,"39203 N Ogden Ln, Beach Park, IL 60083",2243996193,matt.catanus.2100@gmail.com,,,,,,,FALSE,FALSE
+Filam,Mylene,Catanus,04/01,"39203 N Ogden Ln, Beach Park, IL 60083",2247899436,myleneheramiscatanus@yahoo.com,07/30,Stephen Catanus,11/10,2245225487,"David, Matthew, Angelene","01/01, 02/21, 11/30",TRUE,TRUE
+Filam,Stephen,Catanus,11/10,"39203 N Ogden Ln, Beach Park, IL 60083",2245225487,stephencatanus@netscape.net,07/30,Mylene Catanus,04/01,2247899436,"David, Matthew, Angelene","01/01, 02/21, 11/30",TRUE,TRUE
+Filam,Jared,Ceniza,12/17,"6961 N Oakley Ave, Unit 403, Chicago, IL 60645",8474529968,jard1217@gmail.com,10/15,Sheila Baguio-Ceniza,09/08,7739928457,"Eila, Aria","09/25, 05/08",FALSE,TRUE
+Pillar,Alexandra Kate,Chavez,09/17,"7509 Orchard Ln, Woodridge, IL 60517",6303923138,chavezkate357@gmail.com,,,,,,,FALSE,FALSE
+Filam,Reneo,Cinco,03/03,"3230 N Pacific Ave, Chicago, IL 60634",7732137421,joanjake@att.net,08/20,Joan Cinco,03/29,7737073012,Jenna,04/16,TRUE,TRUE
+Filam,Joan,Cinco,03/29,"3230 N Pacific Ave, Chicago, IL 60634",7737073012,joanjake@att.net,08/20,Reneo Cinco,03/03,7732137421,Jenna,04/16,TRUE,TRUE
+Filam,Jenna,Cinco,04/16,"3230 N Pacific Ave, Chicago, IL 60634",7734316609,jcinco@northpark.edu,,,,,,,FALSE,FALSE
+Filam,Alan,Colima,07/23,"4350 W Cullom Ave, Chicago, IL 60641",7734316792,colima.alan@yahoo.com,03/15,Maryanne E. Colima,12/17,7737863513,"Dan Joseph, Kesia",,FALSE,TRUE
+Filam,Maryanne E.,Colima,12/17,"4350 W Cullom Ave, Chicago, IL 60641",7737863513,,03/15,Alan Colima,07/23,7734316792,"Dan Joseph, Kesia",,FALSE,FALSE
+Pillar,Angel,Cordero,04/19,"1745 Rebecca Dr, Romeoville, IL 60446",8152721883,angel.cor419@gmail.com,,,,,,,FALSE,FALSE
+Pillar,Geogie,Cordero,06/17,"1745 Rebecca Dr, Romeoville, IL 60446",6308859016,corderogeogie@gmail.com,12/27,,,,,,TRUE,TRUE
+Pillar,Cora,Cordero,06/21,"1745 Rebecca Dr, Romeoville, IL 60446",6308859015,cgcordero@sbcglobal.net,12/27,,,,,,FALSE,FALSE
+Filam,Frances,Cruz,09/13,"5725 N Major Ave, Chicago, IL 60646",6152606726,mochafrances@yahoo.com,06/05,Darwin Cruz,10/01,7732942374,"Pynnyll Joseph Rivera, Krystn Melicia Cruz","11/25, 11/02",FALSE,TRUE
+Filam,Darwin,Cruz,10/01,"5725 N Major Ave, Chicago, IL 60646",7732942374,darwincruz999@icloud.com,06/05,Frances	Cruz,09/13,6152606726,"Pynnyll Joseph Rivera, Krystn Melicia Cruz",,FALSE,FALSE
+Filam,Nelia,Davis,01/17,"2400 S 9th Ave, Broadview, IL 60155",7085377152,neliaqdavis@gmail.com,06/22,Lindsey Davis Jr,11/03,2248090109,Christian,12/22,TRUE,TRUE
+Filam,Lindsey Jr,Davis,11/03,"2400 S 9th Ave, Broadview, IL 60155",2248090109,,06/22,Nelia Davis,01/17,7085377152,Christian,12/22,FALSE,FALSE
+Pillar,Jeanette,Dojoles,07/04,"5601 King Arthur Ct #6, Westmont, IL 60559",8472080622,isyak2002@yahoo.com,07/21,,,,,,TRUE,TRUE
+Pillar,Herbert,Dojoles,07/11,"5601 King Arthur Ct #6, Westmont, IL 60559",8472080399,hdojoles@yahoo.com,07/21,,,,,,TRUE,TRUE
+Pillar,Eli,Dojoles,10/14,"5601 King Arthur Ct #6, Westmont, IL 60559",8472080622,cacciaeprima@gmail.com,,,,,,,TRUE,TRUE
+Filam,Susan,Edralin,06/30,"9531 N Lavergne Ave, Chicago, IL 60630",6507228479,snjedralin@gmail.com,07/03,Jeffrey Edralin,10/09,6507223799,Jaylen Edralin,07/20,FALSE,TRUE
+Filam,Jeffrey,Edralin,10/09,"9531 N Lavergne Ave, Chicago, IL 60630",6507223799,jefsong@yahoo.com,07/03,Susan Edralin,06/30,6507228479,Jaylen Edralin,07/20,FALSE,TRUE
+Pillar,Linda,Elechicon,04/08,"23 Ambassador Ave, Romeoville, IL 60446",8155285842,may211933@yahoo.com,05/21,,,,,,TRUE,TRUE
+Pillar,Lemuel,Elechicon,,"23 Ambassador Ave, Romeoville, IL 60446",8153419267,lelechicon@gmail.com,,,,,,,FALSE,FALSE
+Filam,Bina,Endaya,03/13,"3639 N Oketo Ave, Chicago, IL 60634",7736031216,beedillor04@yahoo.com,01/29,Emanuel Endaya,08/24,7736031216,"Darlee Mae, Gabrielle Ann","05/14, 09/11",TRUE,TRUE
+Filam,Darlee Mae,Endaya,05/14,"3639 N Oketo Ave, Chicago, IL 60634",7734741138,,,,,,,,FALSE,FALSE
+Filam,Emanuel,Endaya,08/24,"3639 N Oketo Ave, Chicago, IL 60634",7736031216,,01/29,Bina Endaya,03/13,7736031216,"Darlee Mae, Gabrielle Ann","05/14, 09/11",FALSE,FALSE
+Pillar,Pamela,Escario,01/09,"1404 Aster Ln, Bolingbrook, IL 60490",6307884913,p_benliro@yahoo.com,12/05,,,,,,TRUE,TRUE
+Pillar,Gabriel (Gabe),Escario,07/27,"1404 Aster Ln, Bolingbrook, IL 60490",6309438340,gabe109876@icloud.com,,,,,,,TRUE,TRUE
+Pillar,Cheska,Escario,08/07,"1404 Aster Ln, Bolingbrook, IL 60490",6303978701,cheska109876@icloud.com,,,,,,,TRUE,TRUE
+Pillar,Joshua,Escario,12/27,"1404 Aster Ln, Bolingbrook, IL 60490",6307885236,j_escario@yahoo.com,12/05,,,,,,TRUE,TRUE
+Pillar,Sam,Estenor,12/20,"2431 Fawn Lake Cir, Naperville, IL 60564",3122167761,sge1220@gmail.com,,,,,,,FALSE,FALSE
+Filam,Jessica Lois,Esteves,01/12,"3758 N Whipple St, Chicago, IL 60618",7739832644,,,,,,,,FALSE,FALSE
+Filam,Matthew Rei,Esteves,03/10,"3758 N Whipple St, Chicago, IL 60618",,,,,,,,,FALSE,FALSE
+Filam,Jessie,Esteves,04/21,"3758 N Whipple St, Chicago, IL 60618",7738079685,jessie_esteves68@yahoo.com,04/12,Florence Esteves,05/16,7733966121,"Paolo, Jessica Lois, Matthew Rei","05/27, 01/12, 03/10",TRUE,TRUE
+Filam,Florence,Esteves,05/16,"3758 N Whipple St, Chicago, IL 60618",7733966121,florenceesteves67@yahoo.com,04/12,Jessie Esteves,04/21,7738079685,"Paolo, Jessica Lois, Matthew Rei","05/27, 01/12, 03/10",FALSE,FALSE
+Filam,Paolo,Esteves,05/27,"3758 N Whipple St, Chicago, IL 60618",,,,,,,,,FALSE,FALSE
+Pillar,Kai,Frank,01/26,"675 Station Blvd, Unit 204, Aurora, IL 60504",8155459881,,,,,,,,FALSE,FALSE
+Pillar,Viona Lugo,Frank,05/01,"675 Station Blvd, Unit 204, Aurora, IL 60504",8155459881,vglugo98@gmail.com,,,,,,,TRUE,TRUE
+Pillar,Ryan,Frank,,"675 Station Blvd, Unit 204, Aurora, IL 60504",8155459881,,,,,,,,FALSE,FALSE
+Pillar,Joeffrey,Gallinero,05/07,"3509 Old Renwick Trail, Joliet, IL 60435",8155145989,joeffreygallinero@yahoo.com,08/29,,,,,,FALSE,FALSE
+Pillar,Eden,Gallinero,11/15,"3509 Old Renwick Trail, Joliet, IL 60435",8155175002,edenmae@yahoo.com,08/29,,,,,,FALSE,FALSE
+Pillar,Isaac,Gallinero,11/21,"1 Pharmacy Place, St. Louis, MO 63110",8153252241,gallineroI@yahoo.com,,,,,,,FALSE,FALSE
+Pillar,Kate,Gallinero,12/03,"2035 SW Cascade Falls Dr, Ankeny, IA 50023",8153251714,kggabrielle@yahoo.com,,,,,,,FALSE,FALSE
+Pillar,Abella,Garperio,04/12,"778 Bellevue Cir, Oswego, IL 60543",6306018545,,,,,,,,FALSE,FALSE
+Filam,Maeyel Victoria,Genis,01/30,"1712 Linden St, Des Plaines, IL 60018",7087702925,maeyel79@yahoo.com,10/18,Gene Ambrocio Genis,06/06,3128820167,Dulf Vincent,03/24,TRUE,TRUE
+Filam,Dulf Vincent,Genis,03/24,"1712 Linden St, Des Plaines, IL 60018",2244126544,dvjgenis@gmail.com,,,,,,,TRUE,TRUE
+Filam,Gene Ambrocio,Genis,06/06,"1712 Linden St, Des Plaines, IL 60018",3128820167,botoy66@yahoo.com,10/18,Maeyel Victoria Genis,01/30,7087702925,Dulf Vincent,03/24,TRUE,TRUE
+Pillar,Modesto (Mode),Gonora,02/24,"1620 Boulder Ridge Dr, Bolingbrook, IL 60490",6305448838,mg3gonora@yahoo.com,04/08,,,,,,TRUE,TRUE
+Pillar,Mg,Gonora,08/08,"1620 Boulder Ridge Dr, Bolingbrook, IL 60490",6303629205,mg.gonora@gmail.com,,,,,,,TRUE,TRUE
+Pillar,Miriam,Gonora,11/26,"1620 Boulder Ridge Dr, Bolingbrook, IL 60490",6302261668,merryg112648@gmail.com,04/08,,,,,,TRUE,TRUE
+Pillar,Juliet,Henderson,02/16,"23026 Persimmon Ln, Plainfield, IL 60586",8152584050,geomar1616@yahoo.com,05/01,,,,,,TRUE,TRUE
+Pillar,Rizza,Henderson,10/04,"23026 Persimmon Ln, Plainfield, IL 60586",7792066535,rizzamae1004@gmail.com,,,,,,,TRUE,TRUE
+Filam,Faith Candice,Jardenil-Oyos,05/08,"1542 W Elmdale Ave, Chicago, IL 60660",8728086552,fcgjo29@gmail.com,01/29,Tim Hendrick H. Oyos,09/12,8728086565,,,FALSE,TRUE
+Pillar,Agatha,Kapsokavathis,08/25,"437 Berry Dr, Naperville, IL 60540",3138547517,,,,,,,,FALSE,FALSE
+Pillar,John,Kapsokavathis,09/06,"437 Berry Dr, Naperville, IL 60540",3124481274,kkapso75@gmail.com,02/08,,,,,,FALSE,FALSE
+Pillar,Xiomara,Kapsokavathis,12/13,"437 Berry Dr, Naperville, IL 60540",3138547517,xkapso@gmail.com,02/08,,,,,,FALSE,FALSE
+Pillar,Yiannis,Kapsokavathis,12/20,"437 Berry Dr, Naperville, IL 60540",3138547517,,,,,,,,FALSE,FALSE
+Filam,Stefan,Laneman,04/28,"85 Aspen Dr, Vernon Hills, IL 60061",2245956401,,07/26,Dara Maniela Laneman,11/22,8723051278,,,FALSE,FALSE
+Filam,Dara Maniela,Laneman,11/22,"85 Aspen Dr, Vernon Hills, IL 60061",8723051278,barcenadara@gmail.com,07/26,Stefan Laneman,04/28,2245956401,,,TRUE,TRUE
+Pillar,James,Luardo,01/27,"3612 Crockett Ct, Joliet, IL 60435",3313026018,,,,,,,,TRUE,TRUE
+Pillar,Jeric,Luardo,04/10,"3612 Crockett Ct, Joliet, IL 60435",8156307127,,,,,,,,FALSE,FALSE
+Pillar,Amelia,Luardo,08/12,"3612 Crockett Ct, Joliet, IL 60435",8156307127,jimlu14@comcast.net,10/17,,,,,,TRUE,TRUE
+Pillar,Keilah,Luardo,08/13,"3612 Crockett Ct, Joliet, IL 60435",8155828484,keilahlua2014@gmail.com,,,,,,,TRUE,TRUE
+Pillar,Jimmy,Luardo,09/17,"3612 Crockett Ct, Joliet, IL 60435",7735160637,jimlu7@comcast.net,10/17,,,,,,TRUE,TRUE
+Pillar,Haylee,Lucena,02/12,"23026 Persimmon Ln, Plainfield, IL 60586",7792066535,,,,,,,,FALSE,FALSE
+Pillar,Kaycee,Lucena,07/02,"23026 Persimmon Ln, Plainfield, IL 60586",8155856612,kcbless0702@gmail.com,,,,,,,TRUE,TRUE
+Pillar,Alex,Lugo,01/15,"24123 Merlot Ln, Plainfield, IL 60586",6306747537,alexanderlugo@sbcglobal.net,08/28,,,,,,FALSE,FALSE
+Pillar,Violeta (Richelle),Lugo,01/27,"24123 Merlot Ln, Plainfield, IL 60586",6303415033,aquarich27@sbcglobal.net,08/28,,,,,,FALSE,FALSE
+Pillar,Eli,Lugo,07/09,"24123 Merlot Ln, Plainfield, IL 60586",8155084550,elilugo24123@gmail.com,,,,,,,TRUE,TRUE
+Pillar,Aaron,Lugo,11/24,"24123 Merlot Ln, Plainfield, IL 60586",8155778338,,,,,,,,FALSE,FALSE
+Filam,Marife,Mangoang,03/07,"4308 N Olcott Ave, Norridge, IL 60706",7736779544,jesfe72@yahoo.com,,,,,Diane Nicole Trinidad,07/19,FALSE,TRUE
+Filam,Diane Nicole Trinidad,Mangoang,07/19,"4308 N Olcott Ave, Norridge, IL 60706",,,,,,,,,FALSE,FALSE
+Filam,Rogelio,Maravillas,09/11,"5055 N Mozart St, Chicago, IL 60625",2242500253,rogermaravillas143@gmail.com,06/29,May R. Maravillas,10/13,,"Heaven Mia Mayer, Zylah Bliss, Gideon Roy","11/11, 09/15, 09/10",FALSE,TRUE
+Filam,May R.,Maravillas,10/13,"5055 N Mozart St, Chicago, IL 60625",,maravillasmay08@gmail.com,06/29,Rogelio Maravillas,09/11,2242500253,"Heaven Mia Mayer, Zylah Bliss, Gideon Roy","11/11, 09/15, 09/10",FALSE,FALSE
+Pillar,Paquito,Miranda,04/28,"1321 Modaff Rd #3, Naperville, IL 60565",7738089201,,05/20,,,,,,FALSE,FALSE
+Pillar,Erlinda,Miranda,09/06,"1321 Modaff Rd #3, Naperville, IL 60565",7738089202,eamiranda41@gmail.com,05/20,,,,,,FALSE,FALSE
+Pillar,Sammy,Odasco,03/09,"372 Wallace Way, Romeoville, IL 60446",8159197888,odasco@hotmail.com,06/03,,,,,,TRUE,TRUE
+Pillar,Kayla,Odasco,05/11,"372 Wallace Way, Romeoville, IL 60446",8157935003,kaylakayleen@outlook.com,,,,,,,TRUE,TRUE
+Pillar,Kayleen,Odasco,06/20,"8864+MW3, Dumaguete City, Negros Oriental, Philippines",8155057929,kaylakayleen@outlook.com,,,,,,,FALSE,FALSE
+Pillar,Charity,Odasco,08/24,"372 Wallace Way, Romeoville, IL 60446",8153412120,ctodasco@yahoo.com,06/03,,,,,,TRUE,TRUE
+Filam,Rechie Linn,Ostan,09/25,"484 W Hickory St, Chicago Heights, IL 60411",7086732753,ostanrechielinn@gmail.com,,,,,,,FALSE,TRUE
+Pillar,Faith,Oyos,08/01,"1637 N Karlov Ave, Chicago, IL 60639",8728086552,fcjo29@gmail.com,01/18,,,,,,FALSE,FALSE
+Filam,Tim Hendrick H.,Oyos,09/12,"1542 W Elmdale Ave, Chicago, IL 60660",8728086565,,01/29,Faith Candice Jardenil-Oyos,05/08,8728086552,,,FALSE,FALSE
+Pillar,Timothy,Oyos,09/12,"1637 N Karlov Ave, Chicago, IL 60639",8728086565,timhendrick42@gmail.com,01/18,,,,,,FALSE,FALSE
+Filam,Aldo,Peralta,01/28,"21 Rosemont Ave, Roselle, IL 60172",8477364601,aprilp.peralta@gmail.com,12/28,April P. Peralta,07/13,8478284601,Abigail Trinity,05/27,TRUE,TRUE
+Filam,April P.,Peralta,07/13,"21 Rosemont Ave, Roselle, IL 60172",8478284601,aprilp.peralta@gmail.com,12/28,Aldo Peralta,01/28,8477364601,Abigail Trinity,05/27,TRUE,TRUE
+Filam,Donnahart,Pis-an,09/08,"183 E River Rd, Unit F6, Des Plaines, IL 60016",7738076760,hary8t@gmail.com,,,,,,,FALSE,TRUE
+Filam,Dynnyll Joseph,Rivera,11/25,"5725 N Major Ave, Chicago, IL 60646",2533746395,dexamethasone2006@gmail.com,,,,,,,FALSE,FALSE
+Filam,Esther,Rivera,11/30,"5725 N Major Ave, Chicago, IL 60646",7732722169,mochafrances@yahoo.com,,,,,,,FALSE,FALSE
+Pillar,Ivy,Saavedra,02/12,"1120 Lily Cache Ln, Bolingbrook, IL 60490",3318038955,ivymariesaavedra@gmail.com,05/30,,,,,,FALSE,FALSE
+Pillar,Lucia,Saavedra,07/02,"1120 Lily Cache Ln, Bolingbrook, IL 60490",8165851339,,,,,,,,FALSE,FALSE
+Pillar,Martina,Saavedra,08/23,"1120 Lily Cache Ln, Bolingbrook, IL 60490",3312619632,,,,,,,,FALSE,FALSE
+Pillar,Celso,Sanchez,01/13,"649 Poplar Ave, Romeoville, IL 60446",6303635335,cpsanchez2003@gmail.com,08/10,,,,,,TRUE,TRUE
+Filam,Mary Joy,Sanchez,03/11,"313 W 35th St, Unit 313, Steger, IL 60475",7082283867,maryjoysanchez376@gmail.com,,,,,,,FALSE,TRUE
+Pillar,Juliet Ellanic,Sanchez,06/17,"649 Poplar Ave, Romeoville, IL 60446",6308423999,ambot71@yahoo.com,08/10,,,,,,TRUE,TRUE
+Filam,Orlino Jr.,Savella,07/22,"1390 Hunters Ridge E, Hoffman Estates, IL 60192",2244022303,casamonticello@gmail.com,09/04,Rosalie Savella,10/05,2244022304,"Joshua David, Hannah Elizabeth","10/06, 09/25",FALSE,TRUE
+Filam,Rosalie,Savella,10/05,"1390 Hunters Ridge E, Hoffman Estates, IL 60192",2244022304,,09/04,Orlino Jr. Savella,07/22,2244022303,"Joshua David, Hannah Elizabeth","10/06, 09/25",FALSE,TRUE
+Filam,Joshua David,Savella,,"1390 Hunters Ridge E, Hoffman Estates, IL 60192",,,,,,,,,FALSE,FALSE
+Filam,Hannah Elizabeth,Savella,,"1390 Hunters Ridge E, Hoffman Estates, IL 60192",,,,,,,,,FALSE,FALSE
+Pillar,Winston,Simmons,01/04,"734 N Emroy Ave, Elmhurst, IL 60126",6304603615,,,,,,,,FALSE,FALSE
+Pillar,Don,Simmons,04/03,"734 N Emroy Ave, Elmhurst, IL 60126",7738650679,don60188@gmail.com,01/11,,,,,,FALSE,FALSE
+Pillar,Ruth,Simmons,07/14,"734 N Emroy Ave, Elmhurst, IL 60126",6304603615,ruthverba@yahoo.com,01/11,,,,,,FALSE,FALSE
+Pillar,Estelle,Simmons,12/06,"734 N Emroy Ave, Elmhurst, IL 60126",6304603615,,,,,,,,FALSE,FALSE
+Filam,Kyle Gian,Subade,04/16,"2106 Warwick Ln, Glenview, IL 60026",8472748801,k.subadedebate@gmail.com,,,,,,,FALSE,FALSE
+Filam,Cirilo,Subade,07/07,"2106 Warwick Ln, Glenview, IL 60026",8473229189,,06/06,Gina,08/13,8479424014,Kyle Gian,,FALSE,FALSE
+Filam,Gina,Subade,08/13,"2106 Warwick Ln, Glenview, IL 60026",8479424014,ginacns23@gmail.com,06/06,Cirilo,07/07,8473229189,Kyle Gian,,FALSE,TRUE
+Pillar,Joe,Szymanski,01/25,"773 Wheatland Ln, Bolingbrook, IL 60490",6306369549,gojoe66@comcast.net,05/17,,,,,,FALSE,FALSE
+Pillar,Debbie,Szymanski,12/22,"773 Wheatland Ln, Bolingbrook, IL 60490",7082209342,dsdeborahs@gmail.com,05/17,,,,,,TRUE,TRUE
+Pillar,Andrew,Tolentino,01/10,"120 Ginkgo St, Bolingbrook, IL 60490",6303623369,andoyt2005@gmail.com,,,,,,,TRUE,TRUE
+Pillar,Daniel,Tolentino,05/27,"120 Ginkgo St, Bolingbrook, IL 60490",6302299255,tleinad1967@yahoo.com,08/07,,,,,,TRUE,TRUE
+Pillar,Jerome,Tolentino,08/29,"120 Ginkgo St, Bolingbrook, IL 60490",6306774690,jermomoe@gmail.com,,,,,,,TRUE,TRUE
+Pillar,Cela Jane,Tolentino,09/11,"120 Ginkgo St, Bolingbrook, IL 60490",6302299355,celajane@sbcglobal.net,08/07,,,,,,TRUE,TRUE
+Filam,Porfiria,Tolibas,04/04,"2935 N Parkside Ave, Chicago, IL 60634",3127222087,carotinperry@gmail.com,07/21,John,12/11,3128566328,"Darwin, Joann, Daniel, John Jr","03/23, 05/09, 09/28, 04/13",FALSE,TRUE
+Filam,John,Tolibas,12/11,"2935 N Parkside Ave, Chicago, IL 60634",3128566328,,07/21,Porfiria,04/04,3127222087,"Darwin, Joann, Daniel, John Jr","03/23, 05/09, 09/28, 04/13",FALSE,TRUE
+Pillar,Yardy,Tuvilleja,05/19,"9540 Witham Ln, Woodridge, IL 60517",6309564551,boahms@yahoo.com,12/20,,,,,,TRUE,TRUE
+Pillar,Kaitlyn,Tuvilleja,09/10,"9540 Witham Ln, Woodridge, IL 60517",6304783872,boahms@yahoo.com,,,,,,,TRUE,TRUE
+Pillar,Ambo,Tuvilleja,09/26,"9540 Witham Ln, Woodridge, IL 60517",3312537451,,12/20,,,,,,FALSE,FALSE
+Filam,Daphne Zion,Villalon,02/16,"8650 W Davis St, Des Plaines, IL 60016",2248134188,daphvillalon@gmail.com,,,,,,,FALSE,FALSE
+Filam,Mary Ann,Villalon,12/02,"8650 W Davis St, Des Plaines, IL 60016",2247669182,mvillalon2024@gmail.com,03/04,Edward Villalon,12/25,2248171715,"Daphne Zion, Samantha Faith","02/16, 05/06",FALSE,TRUE
+Filam,Edward,Villalon,12/25,"8650 W Davis St, Des Plaines, IL 60016",2248171715,epvillalon@gmail.com,03/04,Mary Ann Villalon,12/02,2247669182,"Daphne Zion, Samantha Faith","02/16, 05/06",TRUE,TRUE
+Pillar,Jayden,Wang,08/06,"9535 Washington Rd, Morton Grove, IL 60053",8479128139,,,,,,,,FALSE,FALSE
+Pillar,Ella,Wang,12/16,"9535 Washington Rd, Morton Grove, IL 60053",8479128139,gme121685@gmail.com,,,,,,,FALSE,FALSE
+Filam,Brian,Wonders,04/11,"327 Garrison Cir, Port Barrington, IL 60010",8479878821,brianandceline2025@gmail.com,01/25,Celina Wonders,10/08,2248171716,,,TRUE,TRUE
+Filam,Celina,Wonders,10/08,"327 Garrison Cir, Port Barrington, IL 60010",2248171716,brianandceline2025@gmail.com,01/25,Brian Wonders,04/11,8479878821,,,TRUE,TRUE
+Pillar,Duke,Zambarrano,04/07,"321 Hickory Oaks Dr, Bolingbrook, IL 60490",6307885399,duke.zambarrano@gmail.com,,,,,,,FALSE,FALSE
+Pillar,Adi,Zapanta,05/23,"321 Hickory Oaks Dr, Bolingbrook, IL 60490",6306429022,adzap15@yahoo.com,,,,,,,FALSE,FALSE
+Pillar,Adonis,Zapanta,10/15,"321 Hickory Oaks Dr, Bolingbrook, IL 60490",6306968577,aegis_gypti@yahoo.com,11/02,,,,,,FALSE,FALSE
+Pillar,Merlrose (Dimple),Zapanta,11/04,"321 Hickory Oaks Dr, Bolingbrook, IL 60490",6305501259,dimple_email@yahoo.com,11/02,,,,,,FALSE,FALSE
+Pillar,Aden,Zapanta,,"321 Hickory Oaks Dr, Bolingbrook, IL 60490",6305501259,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
+,,,,,,,,,,,,,FALSE,FALSE
