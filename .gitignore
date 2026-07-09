@@ -1,0 +1,44 @@
+# --- Church directory data (PII) ---
+# Real member records — never commit
+Filam_Pillar Church Directory - Main.csv
+Filam_Pillar Church Directory - Main.csv.bak
+*.csv.bak
+
+# Ignore CSVs by default; allow only the fake sample used for dev/tests
+*.csv
+!data/sample_directory.csv
+
+# Geocoded addresses (derived from real household data)
+geocode_cache.json
+
+# --- Credentials & secrets ---
+admin_credentials.toml
+.streamlit/secrets.toml
+.env
+.env.*
+
+# Google Cloud / service account key files
+*-service-account*.json
+*service_account*.json
+*credentials*.json
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+.venv/
+venv/
+env/
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
