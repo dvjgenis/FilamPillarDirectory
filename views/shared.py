@@ -14,7 +14,6 @@ import pydeck as pdk
 from helpers import (
     CHURCH_COLORS,
     MONTH_NAMES,
-    REGIONAL_MAP_MAX_ZOOM_ADMIN,
     REGIONAL_MAP_MAX_ZOOM_PUBLIC,
     REGIONAL_MAP_MIN_ZOOM,
     church_full_name,
@@ -255,6 +254,7 @@ def build_regional_deck_view(
     max_zoom: float = REGIONAL_MAP_MAX_ZOOM_PUBLIC,
 ) -> tuple[pdk.ViewState, list[pdk.View]]:
     """Return ViewState + MapView controller with enforced regional zoom limits."""
+    max_zoom = min(max_zoom, REGIONAL_MAP_MAX_ZOOM_PUBLIC)
     zoom = min(max(view_state["zoom"], REGIONAL_MAP_MIN_ZOOM), max_zoom)
     initial_view_state = pdk.ViewState(
         latitude=view_state["latitude"],
@@ -270,6 +270,13 @@ def build_regional_deck_view(
             controller={
                 "minZoom": REGIONAL_MAP_MIN_ZOOM,
                 "maxZoom": max_zoom,
+                "scrollZoom": True,
+                "doubleClickZoom": True,
+                "touchZoom": True,
+                "dragPan": True,
+                "dragRotate": False,
+                "touchRotate": False,
+                "keyboard": False,
             },
         )
     ]

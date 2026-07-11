@@ -83,10 +83,13 @@ def test_map_bounds_still_exclude_philippines():
 def test_build_regional_deck_view_enforces_zoom_limits():
     view_state, map_views = build_regional_deck_view(
         {"latitude": 41.8, "longitude": -87.6, "zoom": 3.0},
-        max_zoom=11.0,
+        max_zoom=20.0,
     )
     assert view_state.zoom == 7.0
     assert view_state.min_zoom == 7.0
-    assert view_state.max_zoom == 11.0
-    assert map_views[0].controller["minZoom"] == 7.0
-    assert map_views[0].controller["maxZoom"] == 11.0
+    assert view_state.max_zoom == 10.0
+    controller = map_views[0].controller
+    assert controller["minZoom"] == 7.0
+    assert controller["maxZoom"] == 10.0
+    assert controller["keyboard"] is False
+    assert controller["dragRotate"] is False

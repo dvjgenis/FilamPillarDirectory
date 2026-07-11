@@ -617,8 +617,9 @@ def is_map_display_coordinate(lat: float, lng: float) -> bool:
 CHICAGO_MAP_CENTER = (41.8781, -87.6298)
 MAP_BUILD_ID = "regional-zoom-limits"
 REGIONAL_MAP_MIN_ZOOM = 7.0
-REGIONAL_MAP_MAX_ZOOM_PUBLIC = 10.0
-REGIONAL_MAP_MAX_ZOOM_ADMIN = 11.0
+REGIONAL_MAP_MAX_ZOOM = 10.0
+REGIONAL_MAP_MAX_ZOOM_PUBLIC = REGIONAL_MAP_MAX_ZOOM
+REGIONAL_MAP_MAX_ZOOM_ADMIN = REGIONAL_MAP_MAX_ZOOM
 
 
 def prepare_map_frame(df: pd.DataFrame | None) -> pd.DataFrame:

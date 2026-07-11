@@ -15,7 +15,6 @@ from helpers import (
     CHURCH_COLORS,
     CSV_PATH,
     MONTH_NAMES,
-    REGIONAL_MAP_MAX_ZOOM_ADMIN,
     audit_data_quality,
     build_church_map_data,
     build_map_data,
@@ -425,10 +424,7 @@ def page_map(df, households):
     )
 
     view_state = compute_regional_view_state(map_df, church_df)
-    initial_view_state, map_views = build_regional_deck_view(
-        view_state,
-        max_zoom=REGIONAL_MAP_MAX_ZOOM_ADMIN,
-    )
+    initial_view_state, map_views = build_regional_deck_view(view_state)
 
     layers = []
     if not map_df.empty:

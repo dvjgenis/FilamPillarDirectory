@@ -469,9 +469,13 @@ def page_name_lookup(df):
 
     public_df = get_public_df(df)
 
-    with st.sidebar.expander("Search", expanded=True):
-        search = st.text_input("Search", placeholder="First or last name...", key="pub_search")
-        st.caption("Type a first or last name. Leave blank to browse everyone.")
+    search = st.text_input(
+        "Search by name",
+        placeholder="Type a first or last name...",
+        key="pub_search",
+    )
+
+    with st.sidebar.expander("Filters", expanded=True):
         churches = st.multiselect(
             "Church",
             options=sorted(public_df["Church_Affiliation"].unique()),
@@ -479,6 +483,7 @@ def page_name_lookup(df):
             key="pub_churches",
         )
         sort_by = st.selectbox("Sort by", ["Last Name", "First Name", "Church"], key="pub_sort")
+        st.caption("Leave the search box blank to browse everyone.")
 
     filtered = filter_people(
         public_df,
