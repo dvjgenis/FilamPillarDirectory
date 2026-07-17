@@ -316,6 +316,12 @@ def _extract_state(address: str) -> str:
     return ""
 
 
+def household_map_radius_pixels(size: int) -> int:
+    """Pixel radius for map dots; larger households get visibly larger markers."""
+    size = max(1, int(size))
+    return int(min(10 + (size - 1) * 5, 40))
+
+
 def group_households(df: pd.DataFrame) -> list[dict]:
     """Group people by home address into household dicts."""
     households = []
@@ -751,7 +757,7 @@ def build_map_data(households: list[dict], geocode_cache: dict) -> pd.DataFrame:
             "lng": float(lng),
             "church": hh["primary_church"],
             "size": int(hh["size"]),
-            "radius_pixels": int(min(6 + hh["size"] * 3, 24)),
+            "radius_pixels": household_map_radius_pixels(int(hh["size"])),
             "city": hh["city"],
             "members": ", ".join(hh["member_names"]),
             "color": _hex_to_rgba(hex_color),

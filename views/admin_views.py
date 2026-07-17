@@ -30,6 +30,7 @@ from helpers import (
     geocode_addresses,
     collect_directory_addresses,
     deck_layer_records,
+    household_map_radius_pixels,
     out_of_region_geocoded_addresses,
     get_events_for_month,
     get_today_events,
@@ -431,8 +432,8 @@ def page_map(df, households):
         st.info(f"No household addresses for {church_filter}, showing church location only.")
 
     render_info_callout(
-        "Each dot is a household. Larger dots mean more people. Labeled markers are church buildings. "
-        "Hover a dot to see the address and members.",
+        "Each dot is a household. Dot size shows how many people live there (larger = more people). "
+        "Labeled markers are church buildings. Hover a dot to see the address and members.",
         icon="📍",
     )
 
@@ -441,20 +442,23 @@ def page_map(df, households):
 
     layers = []
     if not map_df.empty:
-        layers.append(
-            pdk.Layer(
-                "ScatterplotLayer",
-                data=deck_layer_records(map_df),
-                get_position=["lng", "lat"],
-                get_fill_color="color",
-                get_radius="radius_pixels",
-                radius_units="pixels",
-                radius_scale=1,
-                radius_min_pixels=6,
-                radius_max_pixels=24,
-                pickable=True,
+        for household_size in sorted(map_df["size"].unique()):
+            subset = map_df[map_df["size"] == household_size]
+            radius = household_map_radius_pixels(int(household_size))
+            layers.append(
+                pdk.Layer(
+                    "ScatterplotLayer",
+                    data=deck_layer_records(subset),
+                    get_position=["lng", "lat"],
+                    get_fill_color="color",
+                    get_radius=radius,
+                    radius_units="pixels",
+                    radius_scale=1,
+                    radius_min_pixels=radius,
+                    radius_max_pixels=radius,
+                    pickable=True,
+                )
             )
-        )
 
     if not church_df.empty:
         church_data = deck_layer_records(church_df)
@@ -524,7 +528,7 @@ def page_map(df, households):
         f"<span style='color:{CHURCH_COLORS['Filam']}'>●</span> {church_full_name('Filam')} · "
         f"<span style='color:{CHURCH_COLORS['Pillar']}'>●</span> {church_full_name('Pillar')} · "
         "⛪ Church building markers · "
-        "Dot size = household size (larger = more people)",
+        "Dot size = people in household (larger families = bigger dots)",
         unsafe_allow_html=True,
     )
 

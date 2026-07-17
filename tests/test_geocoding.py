@@ -203,7 +203,19 @@ def test_build_map_data_numeric_types():
     assert len(df) == 1
     assert isinstance(df.iloc[0]["lat"], float)
     assert isinstance(df.iloc[0]["lng"], float)
-    assert int(df.iloc[0]["radius_pixels"]) == 18
+    assert int(df.iloc[0]["radius_pixels"]) == 25
+
+
+def test_household_map_radius_increases_with_size():
+    from helpers import household_map_radius_pixels
+
+    r1 = household_map_radius_pixels(1)
+    r3 = household_map_radius_pixels(3)
+    r6 = household_map_radius_pixels(6)
+    assert r1 < r3 < r6
+    assert r1 == 10
+    assert r3 == 20
+    assert r6 == 35
 
 
 def test_deck_layer_records_uses_plain_python_scalars():
