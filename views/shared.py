@@ -224,27 +224,20 @@ PUBLIC_PRIVACY_NOTE = (
     "No phone numbers, emails, or home addresses appear here."
 )
 
-PUBLIC_WELCOME_SHORT = "Filam & Pillar community directory — celebrate and connect."
-
-PUBLIC_WELCOME = (
-    "Welcome to the Filam & Pillar community directory — "
-    "a shared space to celebrate and connect with our church family."
-)
-
-NAV_PENDING_KEY = "nav_public_pending"
+NAV_PENDING_KEY = "nav_staff_pending"
 
 
-def apply_pending_navigation(nav_key: str = "nav_public") -> None:
+def apply_pending_navigation(nav_key: str = "nav_staff") -> None:
     """Apply a pending sidebar page change before the nav radio widget renders."""
-    pending_key = NAV_PENDING_KEY if nav_key == "nav_public" else f"{nav_key}_pending"
+    pending_key = f"{nav_key}_pending"
     pending = st.session_state.pop(pending_key, None)
     if pending is not None:
         st.session_state[nav_key] = pending
 
 
-def queue_navigation(page_label: str, nav_key: str = "nav_public") -> None:
+def queue_navigation(page_label: str, nav_key: str = "nav_staff") -> None:
     """Queue a sidebar navigation change for the next run (before widgets render)."""
-    pending_key = NAV_PENDING_KEY if nav_key == "nav_public" else f"{nav_key}_pending"
+    pending_key = f"{nav_key}_pending"
     st.session_state[pending_key] = page_label
 
 
@@ -338,10 +331,6 @@ def render_minor_privacy_note() -> None:
     )
 
 
-def render_public_sidebar_welcome() -> None:
-    st.caption(PUBLIC_WELCOME_SHORT)
-
-
 def render_staff_sidebar_welcome() -> None:
     st.caption(
         "Staff directory — full contact and family records. "
@@ -425,44 +414,6 @@ def render_lookup_table(rows: list[dict]) -> None:
         parts.append(f"<tr><td>{first}</td><td>{last}</td><td>{badge}</td></tr>")
     parts.append("</tbody></table>")
     st.markdown("".join(parts), unsafe_allow_html=True)
-
-
-def render_welcome_hero(
-    title: str,
-    subtitle: str,
-    stats: list[tuple[str, Any, str | None]],
-    quick_links: list[tuple[str, str, str]],
-) -> None:
-    """Hero card with welcome text, stats, and quick-link cards.
-
-    quick_links: list of (page_label, title, description) e.g. ("📊 Overview", ...)
-    """
-    st.markdown(
-        f'<div class="hero-card">'
-        f'<p class="hero-title">{html.escape(title)}</p>'
-        f'<p class="hero-subtitle">{html.escape(subtitle)}</p>'
-        f"</div>",
-        unsafe_allow_html=True,
-    )
-    render_metric_row(stats)
-    st.markdown("#### Explore the directory")
-    cols = st.columns(len(quick_links))
-    for col, (page_label, link_title, link_desc) in zip(cols, quick_links):
-        with col:
-            st.markdown(
-                f'<div class="quick-link-card">'
-                f'<p class="quick-link-title">{html.escape(link_title)}</p>'
-                f'<p class="quick-link-desc">{html.escape(link_desc)}</p>'
-                f"</div>",
-                unsafe_allow_html=True,
-            )
-            st.button(
-                f"Go to {page_label}",
-                key=f"home_link_{page_label}",
-                width="stretch",
-                on_click=queue_navigation,
-                args=(page_label,),
-            )
 
 
 def format_event_day_html(day_events: list, max_visible: int = 3) -> str:

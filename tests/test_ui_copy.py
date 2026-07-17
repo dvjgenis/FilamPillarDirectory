@@ -1,19 +1,18 @@
 """Smoke tests for UI copy and shared navigation helpers."""
 
-from auth import PUBLIC_PAGE_LABELS, PUBLIC_PAGES
+from auth import ADMIN_PAGE_LABELS
 from helpers import is_map_display_coordinate
 from views.shared import (
     CHART_HOVER_TEMPLATES,
-    PUBLIC_WELCOME_SHORT,
+    NAV_PENDING_KEY,
     apply_hover_sentences,
     build_regional_deck_view,
     calendar_legend_html,
 )
 
 
-def test_home_is_first_public_page():
-    assert PUBLIC_PAGES[0][1] == "🏠 Home"
-    assert PUBLIC_PAGE_LABELS[0] == "🏠 Home"
+def test_directory_is_first_admin_page():
+    assert ADMIN_PAGE_LABELS[0] == "👥 Directory"
 
 
 def test_chart_hover_templates_cover_key_charts():
@@ -50,29 +49,8 @@ def test_calendar_legend_is_plain_language():
     assert "name" not in legend
 
 
-def test_public_welcome_is_short():
-    assert len(PUBLIC_WELCOME_SHORT) < len(
-        "Welcome to the Filam & Pillar community directory — "
-        "a shared space to celebrate and connect with our church family."
-    )
-
-
-def test_queue_navigation_uses_pending_key():
-    from views.shared import NAV_PENDING_KEY, queue_navigation
-
-    class FakeState(dict):
-        def pop(self, key, default=None):
-            return super().pop(key, default)
-
-    state = FakeState()
-    # queue_navigation writes to session state; verify key name contract
-    assert NAV_PENDING_KEY == "nav_public_pending"
-
-
-def test_apply_pending_navigation_key_mapping():
-    from views.shared import NAV_PENDING_KEY
-
-    assert NAV_PENDING_KEY == "nav_public_pending"
+def test_nav_pending_key_for_staff():
+    assert NAV_PENDING_KEY == "nav_staff_pending"
 
 
 def test_map_bounds_still_exclude_philippines():

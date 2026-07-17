@@ -886,29 +886,34 @@ def _dedupe_admin_events(events: list[dict]) -> list[dict]:
     return unique
 
 
-def _child_has_own_birthday_on_date(
-    df: pd.DataFrame, child_name: str, month: int, day: int
-) -> bool:
-    """True when a directory member already has an adult birthday on this date."""
-    child = child_name.lower().strip()
+def _normalize_person_name(name: str) -> str:
+    return re.sub(r"\s+", " ", str(name).lower().strip())
+
+
+def _child_name_matches_row(child_name: str, row) -> bool:
+    """True when a parent-listed child name matches a directory member row."""
+    child = _normalize_person_name(child_name)
     if not child:
         return False
     child_first = child.split()[0]
+    full = _normalize_person_name(row.get("Full_Name", ""))
+    first = _normalize_person_name(row.get("First_Name", ""))
+    last = _normalize_person_name(row.get("Last_Name", ""))
+    if full == child or full.startswith(child + " "):
+        return True
+    if first and last and child == f"{first} {last}":
+        return True
+    if child == first:
+        return True
+    if child_first == first and full.startswith(child_first + " "):
+        return True
+    return False
+
+
+def _child_has_own_directory_entry(df: pd.DataFrame, child_name: str) -> bool:
+    """True when a child listed on a parent record already has their own directory row."""
     for _, row in df.iterrows():
-        if _is_missing(row.get("Birthday_Month")) or _is_missing(row.get("Birthday_Day")):
-            continue
-        try:
-            row_month = int(row["Birthday_Month"])
-            row_day = int(row["Birthday_Day"])
-        except (TypeError, ValueError):
-            continue
-        if row_month != month or row_day != day:
-            continue
-        full = str(row["Full_Name"]).lower().strip()
-        first = str(row["First_Name"]).lower().strip()
-        if full == child or full.startswith(child + " "):
-            return True
-        if child in full and first == child_first:
+        if _child_name_matches_row(child_name, row):
             return True
     return False
 
@@ -935,7 +940,7 @@ def _build_children_birthday_events(df: pd.DataFrame) -> list[dict]:
             month, day = _parse_mmdd(bdays[i])
             if month is None:
                 continue
-            if _child_has_own_birthday_on_date(df, child_name, int(month), int(day)):
+            if _child_has_own_directory_entry(df, child_name):
                 continue
 
             key = (norm_address, child_name.lower().strip(), int(month), int(day))
@@ -1169,6 +1174,7 @@ def audit_data_quality(df: pd.DataFrame) -> dict:
         "missing_phones": [],
         "missing_emails": [],
         "children_mismatches": [],
+        "stale_children_listings": [],
         "invalid_birthdays": [],
         "invalid_anniversaries": [],
     }
@@ -1197,6 +1203,11 @@ def audit_data_quality(df: pd.DataFrame) -> dict:
             issues["children_mismatches"].append(
                 f"{name}: {len(names)} name(s) vs {len(bdays)} birthday(s)"
             )
+        for child_name in names:
+            if _child_has_own_directory_entry(df, child_name):
+                issues["stale_children_listings"].append(
+                    f"{name} still lists {child_name}, who has their own directory entry"
+                )
 
     return issues
 

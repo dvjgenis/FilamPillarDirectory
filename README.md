@@ -1,20 +1,39 @@
 # Church Directory
 
-A Streamlit community portal for **Filam** and **Pillar** churches — public pages for celebrations and lookup, plus a staff area with full directory access.
+A Streamlit **admin-only** directory for **Filam** and **Pillar** churches. The full app is behind login — there is no public portal.
 
 ## Features
 
-**Public portal**
-- Community overview charts (no contact details)
-- First-name-only celebrations calendar
-- Privacy-safe community map (heatmap, not household pins)
-- Name lookup (name + church only)
+**Staff directory** (login required)
 
-**Staff portal** (login required)
 - Searchable people directory with table, card, and household views
 - Household map with geocoding
 - Full calendar including children's birthdays from parent records
 - Leadership insights and data quality reporting
+
+## Login
+
+1. Open the app — you will see the login screen only.
+2. Select one of the three authorized church emails and enter the **shared staff password**.
+3. Click **Send verification code** — a 6-digit code is emailed **only to that address**.
+4. Enter the code to sign in. The session ends when you close the browser or click **Log out**.
+
+### Credentials setup
+
+Copy `admin_credentials.sample.toml` to `admin_credentials.toml` (gitignored), or run:
+
+```bash
+python scripts/setup_admin.py
+```
+
+Configure:
+
+- **email1–email3** — allowlisted addresses that may sign in
+- **password** — shared staff password (plaintext in the local file)
+- **smtp.user** — Gmail sender (`dvjgenis@gmail.com` or your church Gmail)
+- **smtp.app_password** — [Google App Password](https://myaccount.google.com/apppasswords) (2-Step Verification required)
+
+Legacy layout is also supported: `email1`–`email3` under `[credentials.usernames.filpilchurch]` and `app_password` under `[Gmail App Password]` or `[smtp]`.
 
 ## Quick start
 
@@ -24,20 +43,14 @@ make dev
 
 Opens the app at `http://localhost:8501`.
 
-### First-time staff login setup
-
-```bash
-python scripts/setup_admin.py
-```
-
-Or copy `admin_credentials.sample.toml` to `admin_credentials.toml` and set a bcrypt password hash.
-
 ### Using sample data for development
 
 ```bash
 export CHURCH_CSV_PATH=data/sample_directory.csv
 make dev
 ```
+
+If SMTP is not configured locally, the app shows the OTP on screen in dev mode only (not on Streamlit Cloud).
 
 ## Data
 
@@ -105,24 +118,11 @@ python scripts/clean_csv.py --dry-run
 
 ### Geocoding workflow
 
-1. Sign in as staff
+1. Sign in
 2. Open **Household Map**
 3. Click **Geocode all missing** (runs once, cached locally)
-4. Public community map heatmap uses the same cache
 
 Church building markers are geocoded automatically on startup.
-
-## Privacy model
-
-| Data | Public | Staff |
-|------|--------|-------|
-| Name + church | Yes | Yes |
-| City (aggregates) | Yes | Yes |
-| Phone, email, address | No | Yes |
-| Children's data on parent records | No | Yes |
-| Exact household map pins | No | Yes |
-
-Public map aggregates households into ~8–10 mile neighborhood cells and caps zoom so street-level homes can't be matched to heat.
 
 ## Configuration
 
@@ -134,11 +134,15 @@ Public map aggregates households into ~8–10 mile neighborhood cells and caps z
 Streamlit secrets (see `.streamlit/secrets.toml.example`):
 
 ```toml
-[google_sheets]
-sheet_id = "your-sheet-id"
+[auth]
+email1 = "..."
+email2 = "..."
+email3 = "..."
+password = "shared-staff-password"
 
-[cookie]
-key = "your-random-signing-key"
+[smtp]
+user = "sender@gmail.com"
+app_password = "xxxx xxxx xxxx xxxx"
 ```
 
 ## Tests
@@ -151,7 +155,7 @@ make test
 
 1. Push code to GitHub — **do not** commit the real CSV, geocode cache, or credentials
 2. Connect the repo to [Streamlit Community Cloud](https://streamlit.io/cloud) (or your host)
-3. Run `make sync-secrets` locally and paste the full generated `.streamlit/secrets.toml` into Streamlit Cloud → App settings → Secrets (includes `google_sheets`, `gcp_service_account`, `[credentials]`, and `[cookie]`)
+3. Run `make sync-secrets` locally and paste the full generated `.streamlit/secrets.toml` into Streamlit Cloud → App settings → Secrets (includes `google_sheets`, `gcp_service_account`, `[auth]`, and `[smtp]`)
 4. Bootstrap geocoding for Cloud (optional but recommended):
    - `make pregeocode` — builds `geocode_cache.json` locally
    - `make pregeocode-secrets` — prints a `[geocode_cache]` block to paste into secrets so maps work immediately after deploy
@@ -163,12 +167,11 @@ make test
 ## Project layout
 
 ```
-app.py              Entry point and routing
-auth.py             Staff authentication
+app.py              Entry point (login gate + admin routing)
+auth.py             Email + password + OTP authentication
 data_source.py      CSV / Google Sheets loader
 helpers.py          Cleaning, geocoding, events, filters
 views/
-  public_views.py   Public pages
   admin_views.py    Staff pages
   shared.py         CSS, calendar, charts
 scripts/

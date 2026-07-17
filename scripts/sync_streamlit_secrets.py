@@ -19,12 +19,56 @@ GEOCODE_CACHE = ROOT / "geocode_cache.json"
 SHEET_ID = "1n8RTS7LudL23fG9zpc43sPN-IY1WxQt0RZCesTV5iqs"
 
 
-def _cookie_key() -> str:
-    if ADMIN_CREDS.exists():
-        with open(ADMIN_CREDS, "rb") as f:
-            config = tomllib.load(f)
-        return config["cookie"]["key"]
-    return "church_directory_auth_key_change_in_production"
+def _auth_section() -> list[str]:
+    if not ADMIN_CREDS.exists():
+        return []
+    with open(ADMIN_CREDS, "rb") as f:
+        admin = tomllib.load(f)
+
+    emails: list[str] = []
+    password = ""
+    credentials = admin.get("credentials") or {}
+    for user in (credentials.get("usernames") or {}).values():
+        if not isinstance(user, dict):
+            continue
+        for key in ("email1", "email2", "email3", "email"):
+            if user.get(key):
+                emails.append(str(user[key]).strip().lower())
+        if user.get("password"):
+            password = str(user["password"])
+
+    auth_block = admin.get("auth") or {}
+    for key in ("email1", "email2", "email3", "email"):
+        if auth_block.get(key):
+            emails.append(str(auth_block[key]).strip().lower())
+    if auth_block.get("password"):
+        password = str(auth_block["password"])
+
+    emails = list(dict.fromkeys(e for e in emails if e))
+    if not emails or not password:
+        return []
+
+    smtp = admin.get("smtp") or admin.get("gmail_app_password") or admin.get("Gmail App Password") or {}
+    app_password = str(smtp.get("app_password") or admin.get("app_password") or "")
+    smtp_user = str(smtp.get("user") or "dvjgenis@gmail.com")
+
+    lines = [
+        "",
+        "# Staff login — email + shared password + OTP (paste into Streamlit Cloud secrets)",
+        "[auth]",
+    ]
+    for i, email in enumerate(emails[:3], start=1):
+        lines.append(f"email{i} = {_toml_value(email)}")
+    lines.append(f"password = {_toml_value(password)}")
+    lines.extend(
+        [
+            "",
+            "[smtp]",
+            f"user = {_toml_value(smtp_user)}",
+            f"app_password = {_toml_value(app_password)}",
+        ]
+    )
+    return lines
 
 
 def _toml_value(value: str) -> str:
@@ -66,20 +110,6 @@ def _geocode_cache_section() -> list[str]:
     return lines
 
 
-def _admin_credentials_section() -> list[str]:
-    if not ADMIN_CREDS.exists():
-        return []
-    with open(ADMIN_CREDS, "rb") as f:
-        admin = tomllib.load(f)
-    lines = ["", "# Staff login (bcrypt hash — paste into Streamlit Cloud secrets too)"]
-    for username, user in admin.get("credentials", {}).get("usernames", {}).items():
-        lines.append("")
-        lines.append(f"[credentials.usernames.{username}]")
-        lines.append(f"email = {_toml_value(str(user.get('email', '')))}")
-        lines.append(f"name = {_toml_value(str(user.get('name', '')))}")
-        lines.append(f"password = {_toml_value(str(user.get('password', '')))}")
-    return lines
-
 
 def build_secrets_toml(key_path: Path, sheet_id: str) -> str:
     sa = json.loads(key_path.read_text(encoding="utf-8"))
@@ -111,25 +141,7 @@ def build_secrets_toml(key_path: Path, sheet_id: str) -> str:
     for field in required:
         lines.append(f"{field} = {_toml_value(str(sa[field]))}")
 
-    lines.extend(_admin_credentials_section())
-
-    cookie_name = "church_directory_cookie"
-    cookie_expiry = 1
-    if ADMIN_CREDS.exists():
-        with open(ADMIN_CREDS, "rb") as f:
-            admin = tomllib.load(f)
-        cookie_name = str(admin.get("cookie", {}).get("name", cookie_name))
-        cookie_expiry = int(admin.get("cookie", {}).get("expiry_days", cookie_expiry))
-
-    lines.extend(
-        [
-            "",
-            "[cookie]",
-            f"expiry_days = {cookie_expiry}",
-            f"key = {_toml_value(_cookie_key())}",
-            f"name = {_toml_value(cookie_name)}",
-        ]
-    )
+    lines.extend(_auth_section())
     lines.extend(_geocode_cache_section())
     lines.append("")
     return "\n".join(lines)

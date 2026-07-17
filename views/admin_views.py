@@ -685,6 +685,7 @@ def _render_data_quality_section(df, households) -> None:
         + len(issues["missing_emails"])
         + len(issues["missing_birthdays"])
         + len(issues["children_mismatches"])
+        + len(issues["stale_children_listings"])
     )
 
     if uses_google_sheets():
@@ -709,6 +710,15 @@ def _render_data_quality_section(df, households) -> None:
         if issues["children_mismatches"]:
             st.markdown("**Children name/birthday mismatches**")
             for item in issues["children_mismatches"]:
+                st.markdown(f"- {html.escape(item)}")
+
+        if issues["stale_children_listings"]:
+            st.markdown("**Stale children listings**")
+            st.caption(
+                "These children have their own directory entry — remove them from the parent's "
+                "Children_Names field to avoid duplicate calendar data."
+            )
+            for item in issues["stale_children_listings"]:
                 st.markdown(f"- {html.escape(item)}")
 
 
