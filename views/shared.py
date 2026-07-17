@@ -276,33 +276,6 @@ def build_regional_deck_view(
     return initial_view_state, views
 
 
-def run_map_geocoding_if_needed(df) -> dict:
-    """Geocode missing map addresses with progress UI. Returns geocode cache."""
-    from helpers import ensure_map_geocoded, geocode_missing_count, load_geocode_cache
-
-    mapped, total = geocode_missing_count(df)
-    if mapped >= total:
-        return load_geocode_cache(warn_on_corrupt=True)
-
-    missing_count = total - mapped
-    progress = st.progress(0)
-    status = st.empty()
-
-    def on_progress(current, total_count, addr, cached=False):
-        progress.progress(current / total_count)
-        label = "cached" if cached else "mapping"
-        status.text(f"{label}: {addr} ({current}/{total_count})")
-
-    with st.spinner(f"Mapping {missing_count} locations (~1 sec each)..."):
-        ok, err = ensure_map_geocoded(df, on_progress)
-
-    progress.empty()
-    status.empty()
-    if not ok:
-        st.session_state["geocode_warning"] = f"Some locations could not be mapped: {err}"
-    return load_geocode_cache(warn_on_corrupt=True)
-
-
 def apply_global_styles():
     st.markdown(GLOBAL_STYLES, unsafe_allow_html=True)
 

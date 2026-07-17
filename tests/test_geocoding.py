@@ -110,3 +110,108 @@ def test_build_church_map_data_skips_out_of_region_cache_entries():
     church_df = build_church_map_data(cache)
     assert len(church_df) == 1
     assert church_df.iloc[0]["lat"] == 41.9
+
+
+def test_background_geocoding_running_false_initially():
+    import helpers
+
+    helpers._geocode_thread = None
+    assert helpers.background_geocoding_running() is False
+
+
+def test_start_background_geocoding_skips_second_thread(monkeypatch):
+    import helpers
+
+    helpers._geocode_thread = None
+    started = []
+
+    class FakeThread:
+        def __init__(self, target=None, daemon=None):
+            self._target = target
+            self.daemon = daemon
+            started.append(self)
+
+        def start(self):
+            pass
+
+        def is_alive(self):
+            return True
+
+    monkeypatch.setattr(helpers.threading, "Thread", FakeThread)
+    monkeypatch.setattr(
+        helpers,
+        "collect_directory_addresses",
+        lambda df: ["123 Main St, Chicago, IL"],
+    )
+    monkeypatch.setattr(helpers, "load_geocode_cache", lambda: {})
+
+    df = pd.DataFrame({"Home_Address": ["123 Main St, Chicago, IL"]})
+    helpers.start_background_geocoding(df)
+    helpers.start_background_geocoding(df)
+    assert len(started) == 1
+
+    helpers._geocode_thread = None
+
+
+def test_start_background_geocoding_no_op_when_fully_mapped(monkeypatch):
+    import helpers
+
+    helpers._geocode_thread = None
+    started = []
+
+    class FakeThread:
+        def __init__(self, target=None, daemon=None):
+            started.append(self)
+
+        def start(self):
+            pass
+
+        def is_alive(self):
+            return False
+
+    monkeypatch.setattr(helpers.threading, "Thread", FakeThread)
+    monkeypatch.setattr(
+        helpers,
+        "collect_directory_addresses",
+        lambda df: ["123 Main St, Chicago, IL"],
+    )
+    monkeypatch.setattr(
+        helpers,
+        "load_geocode_cache",
+        lambda: {"123 Main St, Chicago, IL": {"lat": 41.0, "lng": -87.0}},
+    )
+
+    df = pd.DataFrame({"Home_Address": ["123 Main St, Chicago, IL"]})
+    helpers.start_background_geocoding(df)
+    assert started == []
+
+
+def test_build_map_data_numeric_types():
+    from helpers import build_map_data
+
+    households = [
+        {
+            "address": "123 Main St, Chicago, IL 60601",
+            "primary_church": "Filam",
+            "size": 4,
+            "city": "Chicago",
+            "member_names": ["Alex", "Jordan"],
+        }
+    ]
+    cache = {"123 Main St, Chicago, IL 60601": {"lat": 41.88, "lng": -87.63}}
+    df = build_map_data(households, cache)
+    assert len(df) == 1
+    assert isinstance(df.iloc[0]["lat"], float)
+    assert isinstance(df.iloc[0]["lng"], float)
+    assert int(df.iloc[0]["radius_pixels"]) == 18
+
+
+def test_deck_layer_records_uses_plain_python_scalars():
+    from helpers import deck_layer_records
+
+    df = pd.DataFrame({"lat": [41.9], "lng": [-87.7], "radius_pixels": [12]})
+    records = deck_layer_records(df)
+    assert len(records) == 1
+    assert type(records[0]["lat"]) is float
+    assert type(records[0]["lng"]) is float
+    assert type(records[0]["radius_pixels"]) is int

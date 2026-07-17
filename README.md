@@ -122,11 +122,13 @@ python scripts/clean_csv.py --dry-run
 
 ### Geocoding workflow
 
-1. Sign in
-2. Open **Household Map**
-3. Click **Geocode all missing** (runs once, cached locally)
+After you sign in, the app **starts mapping household and church addresses in the background** (~1 second per new address). You can use Directory, Calendar, and Insights while mapping runs; the sidebar shows progress (`Mapping addresses: X/Y…`).
 
-Church building markers are geocoded automatically on startup.
+1. Sign in — background geocoding begins automatically.
+2. Open **Household Map** when ready. If mapping is still running, the page explains that you can check back shortly; partial maps appear as addresses finish.
+3. Use **Geocode all missing** on the map page (expand **Map tools**) if you need to force or retry geocoding.
+
+Church building markers are included in the same background job. For instant maps on Streamlit Cloud, embed `[geocode_cache]` in secrets via `make pregeocode` and `make sync-secrets`.
 
 ## Configuration
 
@@ -166,7 +168,7 @@ make test
 5. Share the Google Sheet only with trusted staff + the service account
 6. Host behind HTTPS (Streamlit Cloud does this automatically)
 
-**Note:** Without a secrets geocode cache, the first visit to a Map page geocodes missing addresses (~1 sec each) with a visible progress bar. Other pages load immediately.
+**Note:** Without a secrets geocode cache, the map fills in over a few minutes after sign-in while background geocoding runs. Manual geocode tools remain on the Household Map page.
 
 ## Project layout
 

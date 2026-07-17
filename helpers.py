@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import os
 import re
+import threading
 import time
 import urllib.error
 import urllib.parse
@@ -82,20 +83,20 @@ SENSITIVE_FIELDS = [
 ALL_DISPLAY_FIELDS = list(CSV_COLUMNS)
 
 CHURCH_COLORS = {
-    "Filam": "#2563EB",
-    "Pillar": "#DC2626",
+    "Filam": "#92400E",
+    "Pillar": "#15803D",
 }
 
 CHURCH_MARKER_STYLES = {
     "Filam": {
-        "fill": [251, 191, 36, 255],
-        "border": [30, 64, 175, 255],
-        "label_color": [30, 64, 175, 255],
+        "fill": [180, 130, 70, 255],
+        "border": [146, 64, 14, 255],
+        "label_color": [146, 64, 14, 255],
     },
     "Pillar": {
-        "fill": [251, 191, 36, 255],
-        "border": [153, 27, 27, 255],
-        "label_color": [153, 27, 27, 255],
+        "fill": [74, 222, 128, 255],
+        "border": [21, 128, 61, 255],
+        "label_color": [21, 128, 61, 255],
     },
 }
 
@@ -427,6 +428,51 @@ def geocode_missing_count(df: pd.DataFrame | None) -> tuple[int, int]:
     return mapped, len(addresses)
 
 
+def geocode_progress(df: pd.DataFrame | None) -> tuple[int, int]:
+    """Return (mapped, total) for UI progress copy."""
+    return geocode_missing_count(df)
+
+
+_geocode_thread_lock = threading.Lock()
+_geocode_thread: threading.Thread | None = None
+
+
+def background_geocoding_running() -> bool:
+    global _geocode_thread
+    return _geocode_thread is not None and _geocode_thread.is_alive()
+
+
+def start_background_geocoding(df: pd.DataFrame) -> None:
+    """Geocode missing map addresses in a daemon thread (non-blocking for the UI)."""
+    global _geocode_thread
+    addresses = collect_directory_addresses(df)
+    cache = load_geocode_cache()
+    missing = [a for a in addresses if a not in cache or cache[a].get("lat") is None]
+    if not missing:
+        return
+
+    with _geocode_thread_lock:
+        if _geocode_thread is not None and _geocode_thread.is_alive():
+            return
+
+        def _worker() -> None:
+            try:
+                ensure_church_geocoded()
+                cache_fresh = load_geocode_cache()
+                still_missing = [
+                    a
+                    for a in collect_directory_addresses(df)
+                    if a not in cache_fresh or cache_fresh[a].get("lat") is None
+                ]
+                if still_missing:
+                    geocode_addresses(still_missing)
+            except Exception:
+                pass
+
+        _geocode_thread = threading.Thread(target=_worker, daemon=True)
+        _geocode_thread.start()
+
+
 def ensure_map_geocoded(
     df: pd.DataFrame,
     progress_callback=None,
@@ -681,6 +727,13 @@ def out_of_region_geocoded_addresses(
     return sorted(excluded)
 
 
+def deck_layer_records(df: pd.DataFrame) -> list[dict]:
+    """Convert map dataframe to plain JSON-serializable rows for pydeck on Streamlit Cloud."""
+    if df is None or df.empty:
+        return []
+    return json.loads(df.to_json(orient="records"))
+
+
 def build_map_data(households: list[dict], geocode_cache: dict) -> pd.DataFrame:
     """Build dataframe for pydeck map from households + geocode cache."""
     rows = []
@@ -694,16 +747,21 @@ def build_map_data(households: list[dict], geocode_cache: dict) -> pd.DataFrame:
         hex_color = CHURCH_COLORS.get(hh["primary_church"], "#6B7280")
         rows.append({
             "address": hh["address"],
-            "lat": lat,
-            "lng": lng,
+            "lat": float(lat),
+            "lng": float(lng),
             "church": hh["primary_church"],
-            "size": hh["size"],
-            "radius_pixels": min(6 + hh["size"] * 3, 24),
+            "size": int(hh["size"]),
+            "radius_pixels": int(min(6 + hh["size"] * 3, 24)),
             "city": hh["city"],
             "members": ", ".join(hh["member_names"]),
             "color": _hex_to_rgba(hex_color),
         })
-    return pd.DataFrame(rows)
+    df = pd.DataFrame(rows)
+    if not df.empty:
+        df["lat"] = df["lat"].astype(float)
+        df["lng"] = df["lng"].astype(float)
+        df["radius_pixels"] = df["radius_pixels"].astype(int)
+    return df
 
 
 def get_church_addresses() -> list[str]:
@@ -741,7 +799,11 @@ def build_church_map_data(
             "border_color": style["border"],
             "label_color": style["label_color"],
         })
-    return pd.DataFrame(rows)
+    df = pd.DataFrame(rows)
+    if not df.empty:
+        df["lat"] = df["lat"].astype(float)
+        df["lng"] = df["lng"].astype(float)
+    return df
 
 
 # ~8–10 mile grid cells — neighborhood-scale, not street-level

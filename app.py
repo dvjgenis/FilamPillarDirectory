@@ -17,11 +17,14 @@ from data_source import (
     uses_google_sheets,
 )
 from helpers import (
+    background_geocoding_running,
     build_admin_events,
     ensure_church_geocoded,
     geocode_cache_mtime,
+    geocode_progress,
     group_households,
     load_and_clean,
+    start_background_geocoding,
 )
 from views.admin_views import (
     page_calendar,
@@ -140,6 +143,10 @@ def main():
         st.divider()
         admin_payload = load_admin_data()
         df_admin, households, _ = admin_payload
+        start_background_geocoding(df_admin)
+        mapped_geo, total_geo = geocode_progress(df_admin)
+        if total_geo and mapped_geo < total_geo:
+            st.caption(f"Mapping addresses: {mapped_geo}/{total_geo}…")
         col1, col2 = st.columns(2)
         col1.metric("People", len(df_admin))
         col2.metric("Churches", df_admin["Church_Affiliation"].nunique())

@@ -16,6 +16,7 @@ from helpers import (
     CSV_PATH,
     MONTH_NAMES,
     audit_data_quality,
+    background_geocoding_running,
     build_church_map_data,
     build_map_data,
     compute_regional_view_state,
@@ -28,6 +29,7 @@ from helpers import (
     format_phone,
     geocode_addresses,
     collect_directory_addresses,
+    deck_layer_records,
     out_of_region_geocoded_addresses,
     get_events_for_month,
     get_today_events,
@@ -53,7 +55,6 @@ from views.shared import (
     render_metric_row,
     render_page_header,
     render_viz_card,
-    run_map_geocoding_if_needed,
     show_chart,
 )
 
@@ -326,7 +327,7 @@ def page_map(df, households):
     render_page_header(
         "🗺️ Where We Live",
         "Household locations across Chicagoland. Dot color shows primary church affiliation; "
-        "dot size reflects household size. Gold markers are church buildings.",
+        "dot size reflects household size. Markers with church labels are building locations.",
         question="Where do households live across Chicagoland?",
     )
 
@@ -335,18 +336,30 @@ def page_map(df, households):
     with st.sidebar.expander("Map filters", expanded=True):
         church_filter = st.radio("Show churches", ["All", "Filam", "Pillar"], horizontal=True, key="adm_map_church")
 
-    cache = run_map_geocoding_if_needed(df)
+    cache = load_geocode_cache(warn_on_corrupt=True)
     mapped, total = _geocode_coverage(addresses, cache)
 
     missing = [a for a in addresses if a not in cache or cache[a].get("lat") is None]
     failed = [a for a in addresses if cache.get(a, {}).get("error")]
 
-    with st.expander("Map tools (geocoding & coverage)", expanded=bool(missing)):
+    if missing and background_geocoding_running():
+        st.info(
+            f"Household addresses are still being mapped in the background "
+            f"({mapped} of {total} ready). You can use other pages and return here in a "
+            "few minutes, or refresh this page for updates."
+        )
+    elif missing and mapped < total:
+        st.info(
+            f"Mapping is in progress or not complete ({mapped} of {total} ready). "
+            "Check back shortly, refresh this page, or use the tools below to geocode manually."
+        )
+
+    with st.expander("Map tools (geocoding & coverage)", expanded=bool(missing) and not background_geocoding_running()):
         st.metric("Addresses mapped", f"{mapped} of {total}")
         if missing:
             st.warning(
                 f"**{len(missing)}** address(es) could not be mapped yet. "
-                "New addresses are geocoded when you open this map (~1 sec per address). "
+                "Mapping runs in the background after you sign in. "
                 "Try **Refresh data** in the sidebar, or geocode manually below."
             )
             geo_col1, geo_col2 = st.columns(2)
@@ -418,7 +431,7 @@ def page_map(df, households):
         st.info(f"No household addresses for {church_filter}, showing church location only.")
 
     render_info_callout(
-        "Each dot is a household. Larger dots mean more people. Gold markers are church buildings. "
+        "Each dot is a household. Larger dots mean more people. Labeled markers are church buildings. "
         "Hover a dot to see the address and members.",
         icon="📍",
     )
@@ -431,37 +444,43 @@ def page_map(df, households):
         layers.append(
             pdk.Layer(
                 "ScatterplotLayer",
-                data=map_df,
+                data=deck_layer_records(map_df),
                 get_position=["lng", "lat"],
                 get_fill_color="color",
                 get_radius="radius_pixels",
                 radius_units="pixels",
+                radius_scale=1,
+                radius_min_pixels=6,
+                radius_max_pixels=24,
                 pickable=True,
             )
         )
 
     if not church_df.empty:
+        church_data = deck_layer_records(church_df)
         layers.extend([
             pdk.Layer(
                 "ScatterplotLayer",
-                data=church_df,
+                data=church_data,
                 get_position=["lng", "lat"],
                 get_fill_color=[251, 191, 36, 80],
-                get_radius=1,
+                get_radius=14,
+                radius_units="pixels",
                 radius_scale=1,
-                radius_min_pixels=30,
-                radius_max_pixels=30,
+                radius_min_pixels=14,
+                radius_max_pixels=14,
                 pickable=False,
             ),
             pdk.Layer(
                 "ScatterplotLayer",
-                data=church_df,
+                data=church_data,
                 get_position=["lng", "lat"],
                 get_fill_color="fill_color",
-                get_radius=1,
+                get_radius=9,
+                radius_units="pixels",
                 radius_scale=1,
-                radius_min_pixels=16,
-                radius_max_pixels=16,
+                radius_min_pixels=9,
+                radius_max_pixels=9,
                 stroked=True,
                 get_line_color="border_color",
                 line_width_min_pixels=4,
@@ -469,7 +488,7 @@ def page_map(df, households):
             ),
             pdk.Layer(
                 "TextLayer",
-                data=church_df,
+                data=church_data,
                 get_position=["lng", "lat"],
                 get_text="label",
                 get_size=14,
@@ -504,7 +523,7 @@ def page_map(df, households):
         f"**Legend:** "
         f"<span style='color:{CHURCH_COLORS['Filam']}'>●</span> {church_full_name('Filam')} · "
         f"<span style='color:{CHURCH_COLORS['Pillar']}'>●</span> {church_full_name('Pillar')} · "
-        "⛪ Gold markers = church buildings · "
+        "⛪ Church building markers · "
         "Dot size = household size (larger = more people)",
         unsafe_allow_html=True,
     )
