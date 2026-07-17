@@ -2,6 +2,8 @@
 
 A Streamlit **admin-only** directory for **Filam** and **Pillar** churches. The full app is behind login — there is no public portal.
 
+**Live app:** [https://filampillardirectory.streamlit.app/](https://filampillardirectory.streamlit.app/)
+
 ## Features
 
 **Staff directory** (login required)
@@ -13,8 +15,8 @@ A Streamlit **admin-only** directory for **Filam** and **Pillar** churches. The 
 
 ## Login
 
-1. Open the app — you will see the login screen only.
-2. Select one of the three authorized church emails and enter the **shared staff password**.
+1. Open the [live app](https://filampillardirectory.streamlit.app/) (or run locally with `make dev`) — you will see the login screen only.
+2. Enter one of the authorized church emails and the **shared staff password**.
 3. Click **Send verification code** — a 6-digit code is emailed **only to that address**.
 4. Enter the code to sign in. The session ends when you close the browser or click **Log out**.
 
@@ -92,6 +94,8 @@ make dev-sheets
 
 #### Streamlit Cloud deployment
 
+**Deployed app:** [https://filampillardirectory.streamlit.app/](https://filampillardirectory.streamlit.app/)
+
 1. Run `make sync-secrets` locally.
 2. Copy the entire contents of `.streamlit/secrets.toml` into **Streamlit Cloud → App settings → Secrets**.
 3. Reboot the app.
@@ -154,7 +158,7 @@ make test
 ## Deployment checklist
 
 1. Push code to GitHub — **do not** commit the real CSV, geocode cache, or credentials
-2. Connect the repo to [Streamlit Community Cloud](https://streamlit.io/cloud) (or your host)
+2. Production URL: [https://filampillardirectory.streamlit.app/](https://filampillardirectory.streamlit.app/) (Streamlit Community Cloud)
 3. Run `make sync-secrets` locally and paste the full generated `.streamlit/secrets.toml` into Streamlit Cloud → App settings → Secrets (includes `google_sheets`, `gcp_service_account`, `[auth]`, and `[smtp]`)
 4. Bootstrap geocoding for Cloud (optional but recommended):
    - `make pregeocode` — builds `geocode_cache.json` locally
