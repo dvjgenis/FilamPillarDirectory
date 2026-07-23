@@ -81,7 +81,7 @@ def _geocode_cache_section() -> list[str]:
             "",
             "# Geocode cache: run `make pregeocode` then `make sync-secrets` to embed map coordinates.",
         ]
-    from helpers import is_map_display_coordinate
+    from helpers import is_valid_coordinate
 
     cache = json.loads(GEOCODE_CACHE.read_text(encoding="utf-8"))
     mapped = {}
@@ -93,7 +93,7 @@ def _geocode_cache_section() -> list[str]:
             lat_f, lng_f = float(lat), float(lng)
         except (TypeError, ValueError):
             continue
-        if not is_map_display_coordinate(lat_f, lng_f):
+        if not is_valid_coordinate(lat_f, lng_f):
             continue
         mapped[address] = {"lat": lat_f, "lng": lng_f}
     if not mapped:

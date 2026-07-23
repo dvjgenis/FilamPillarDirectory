@@ -14,9 +14,10 @@ import pydeck as pdk
 from helpers import (
     CHURCH_COLORS,
     MONTH_NAMES,
-    REGIONAL_MAP_MAX_ZOOM_PUBLIC,
-    REGIONAL_MAP_MIN_ZOOM,
+    MAP_MAX_ZOOM,
+    MAP_MIN_ZOOM,
     church_full_name,
+    church_color_legend_html,
     event_icon,
     month_calendar_grid,
     style_figure,
@@ -244,16 +245,15 @@ def queue_navigation(page_label: str, nav_key: str = "nav_staff") -> None:
 def build_regional_deck_view(
     view_state: dict[str, float],
     *,
-    max_zoom: float = REGIONAL_MAP_MAX_ZOOM_PUBLIC,
+    max_zoom: float = MAP_MAX_ZOOM,
 ) -> tuple[pdk.ViewState, list[pdk.View]]:
-    """Return ViewState + MapView controller with enforced regional zoom limits."""
-    max_zoom = min(max_zoom, REGIONAL_MAP_MAX_ZOOM_PUBLIC)
-    zoom = min(max(view_state["zoom"], REGIONAL_MAP_MIN_ZOOM), max_zoom)
+    """Return ViewState + MapView controller with unrestricted zoom."""
+    zoom = view_state["zoom"]
     initial_view_state = pdk.ViewState(
         latitude=view_state["latitude"],
         longitude=view_state["longitude"],
         zoom=zoom,
-        min_zoom=REGIONAL_MAP_MIN_ZOOM,
+        min_zoom=MAP_MIN_ZOOM,
         max_zoom=max_zoom,
         pitch=0,
     )
@@ -261,7 +261,7 @@ def build_regional_deck_view(
         pdk.View(
             type="MapView",
             controller={
-                "minZoom": REGIONAL_MAP_MIN_ZOOM,
+                "minZoom": MAP_MIN_ZOOM,
                 "maxZoom": max_zoom,
                 "scrollZoom": True,
                 "doubleClickZoom": True,
@@ -541,8 +541,7 @@ def render_calendar_controls(today: date, *, mode: str = "public") -> tuple[int,
 def calendar_legend_html(*, include_children: bool = False) -> str:
     """Plain-language calendar color legend."""
     parts = [
-        f"<span style='color:{CHURCH_COLORS['Filam']}'>●</span> {church_full_name('Filam')}",
-        f"<span style='color:{CHURCH_COLORS['Pillar']}'>●</span> {church_full_name('Pillar')}",
+        church_color_legend_html(separator=" &nbsp;&nbsp; "),
         "🎂 Birthday",
     ]
     if include_children:

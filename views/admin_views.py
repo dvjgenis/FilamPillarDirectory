@@ -21,6 +21,7 @@ from helpers import (
     build_map_data,
     compute_regional_view_state,
     church_full_name,
+    church_color_legend_html,
     city_church_breakdown,
     csv_mtime,
     display_value,
@@ -31,7 +32,6 @@ from helpers import (
     collect_directory_addresses,
     deck_layer_records,
     household_map_radius_pixels,
-    out_of_region_geocoded_addresses,
     get_events_for_month,
     get_today_events,
     get_upcoming_events,
@@ -327,15 +327,21 @@ def _geocode_coverage(addresses: list[str], cache: dict) -> tuple[int, int]:
 def page_map(df, households):
     render_page_header(
         "🗺️ Where We Live",
-        "Household locations across Chicagoland. Dot color shows primary church affiliation; "
-        "dot size reflects household size. Markers with church labels are building locations.",
-        question="Where do households live across Chicagoland?",
+        "Household locations worldwide. Dot color shows primary church affiliation; "
+        "dot size reflects household size. The map opens on Chicagoland — zoom and pan to explore. "
+        "Markers with church labels are building locations.",
+        question="Where do households live?",
     )
 
     addresses = collect_directory_addresses(df)
 
     with st.sidebar.expander("Map filters", expanded=True):
-        church_filter = st.radio("Show churches", ["All", "Filam", "Pillar"], horizontal=True, key="adm_map_church")
+        church_filter = st.radio(
+            "Show churches",
+            ["All", *CHURCH_COLORS.keys()],
+            horizontal=True,
+            key="adm_map_church",
+        )
 
     cache = load_geocode_cache(warn_on_corrupt=True)
     mapped, total = _geocode_coverage(addresses, cache)
@@ -407,14 +413,6 @@ def page_map(df, households):
         if unmapped:
             st.markdown(f"**{len(unmapped)} unmapped address(es)**")
             st.dataframe(pd.DataFrame({"Address": unmapped}), hide_index=True)
-
-        out_of_region = out_of_region_geocoded_addresses(addresses, cache)
-        if out_of_region:
-            st.markdown(f"**{len(out_of_region)} address(es) outside regional map**")
-            st.caption(
-                "Geocoded but omitted from the map so distant locations do not distort the Chicagoland view."
-            )
-            st.dataframe(pd.DataFrame({"Address": out_of_region}), hide_index=True)
 
     cache = load_geocode_cache()
     map_df = prepare_map_frame(build_map_data(households, cache))
@@ -524,9 +522,7 @@ def page_map(df, households):
     )
 
     st.markdown(
-        f"**Legend:** "
-        f"<span style='color:{CHURCH_COLORS['Filam']}'>●</span> {church_full_name('Filam')} · "
-        f"<span style='color:{CHURCH_COLORS['Pillar']}'>●</span> {church_full_name('Pillar')} · "
+        f"**Legend:** {church_color_legend_html()} · "
         "⛪ Church building markers · "
         "Dot size = people in household (larger families = bigger dots)",
         unsafe_allow_html=True,

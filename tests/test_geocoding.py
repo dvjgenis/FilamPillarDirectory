@@ -6,8 +6,7 @@ from helpers import (
     CHURCH_LOCATIONS,
     collect_directory_addresses,
     compute_regional_view_state,
-    is_map_display_coordinate,
-    out_of_region_geocoded_addresses,
+    is_valid_coordinate,
     prepare_map_frame,
 )
 
@@ -33,12 +32,17 @@ def test_collect_directory_addresses_includes_households():
     assert "Not available" not in addresses
 
 
-def test_is_map_display_coordinate_accepts_chicagoland():
-    assert is_map_display_coordinate(41.9, -87.7) is True
+def test_is_valid_coordinate_accepts_chicagoland():
+    assert is_valid_coordinate(41.9, -87.7) is True
 
 
-def test_is_map_display_coordinate_rejects_international():
-    assert is_map_display_coordinate(9.31, 123.31) is False
+def test_is_valid_coordinate_accepts_international():
+    assert is_valid_coordinate(9.31, 123.31) is True
+
+
+def test_is_valid_coordinate_rejects_out_of_range():
+    assert is_valid_coordinate(91.0, -87.7) is False
+    assert is_valid_coordinate(41.9, 181.0) is False
 
 
 def test_geocode_missing_count_uses_cache():
@@ -59,38 +63,26 @@ def test_ensure_map_geocoded_returns_tuple():
     assert err is None
 
 
-def test_out_of_region_geocoded_addresses():
-    cache = {
-        "Chicago, IL": {"lat": 41.9, "lng": -87.7},
-        "Philippines": {"lat": 9.31, "lng": 123.31},
-        "Missing": {"lat": None, "lng": None},
-    }
-    excluded = out_of_region_geocoded_addresses(
-        ["Chicago, IL", "Philippines", "Missing"],
-        cache,
-    )
-    assert excluded == ["Philippines"]
-
-
-def test_prepare_map_frame_drops_out_of_region_rows():
+def test_prepare_map_frame_drops_invalid_rows():
     frame = pd.DataFrame(
         {
-            "lat": [41.9, 9.31, "bad"],
-            "lng": [-87.7, 123.31, -88.0],
+            "lat": [41.9, 9.31, "bad", 100.0],
+            "lng": [-87.7, 123.31, -88.0, -87.7],
         }
     )
     filtered = prepare_map_frame(frame)
-    assert len(filtered) == 1
+    assert len(filtered) == 2
     assert filtered.iloc[0]["lat"] == 41.9
+    assert filtered.iloc[1]["lat"] == 9.31
 
 
-def test_compute_regional_view_state_ignores_outliers():
+def test_compute_regional_view_state_defaults_to_chicago():
     chicagoland = pd.DataFrame({"lat": [41.9, 41.7], "lng": [-87.7, -88.2]})
     outlier = pd.DataFrame({"lat": [9.31], "lng": [123.31]})
     view = compute_regional_view_state(chicagoland, outlier)
-    assert 41.0 < view["latitude"] < 42.0
-    assert -89.0 < view["longitude"] < -87.0
-    assert view["zoom"] >= 7.0
+    assert view["latitude"] == 41.8781
+    assert view["longitude"] == -87.6298
+    assert view["zoom"] == 8.0
 
 
 def test_compute_regional_view_state_falls_back_to_chicago():
@@ -100,7 +92,7 @@ def test_compute_regional_view_state_falls_back_to_chicago():
     assert view["zoom"] == 8.0
 
 
-def test_build_church_map_data_skips_out_of_region_cache_entries():
+def test_build_church_map_data_includes_valid_cache_entries():
     from helpers import build_church_map_data
 
     cache = {
@@ -108,8 +100,7 @@ def test_build_church_map_data_skips_out_of_region_cache_entries():
         list(CHURCH_LOCATIONS.values())[1]: {"lat": 9.31, "lng": 123.31},
     }
     church_df = build_church_map_data(cache)
-    assert len(church_df) == 1
-    assert church_df.iloc[0]["lat"] == 41.9
+    assert len(church_df) == 2
 
 
 def test_background_geocoding_running_false_initially():
@@ -184,6 +175,37 @@ def test_start_background_geocoding_no_op_when_fully_mapped(monkeypatch):
     df = pd.DataFrame({"Home_Address": ["123 Main St, Chicago, IL"]})
     helpers.start_background_geocoding(df)
     assert started == []
+
+
+def test_build_map_data_includes_international_households():
+    from helpers import build_map_data
+
+    households = [
+        {
+            "address": "123 Main St, Chicago, IL 60601",
+            "primary_church": "Filam",
+            "size": 4,
+            "city": "Chicago",
+            "member_names": ["Alex", "Jordan"],
+        },
+        {
+            "address": "Cebu City, Philippines",
+            "primary_church": "Pillar",
+            "size": 2,
+            "city": "Cebu City",
+            "member_names": ["Maria", "Juan"],
+        },
+    ]
+    cache = {
+        "123 Main St, Chicago, IL 60601": {"lat": 41.88, "lng": -87.63},
+        "Cebu City, Philippines": {"lat": 10.32, "lng": 123.89},
+    }
+    df = build_map_data(households, cache)
+    assert len(df) == 2
+    assert set(df["address"]) == {
+        "123 Main St, Chicago, IL 60601",
+        "Cebu City, Philippines",
+    }
 
 
 def test_build_map_data_numeric_types():

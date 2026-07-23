@@ -85,6 +85,7 @@ ALL_DISPLAY_FIELDS = list(CSV_COLUMNS)
 CHURCH_COLORS = {
     "Filam": "#92400E",
     "Pillar": "#15803D",
+    "Missionary": "#9333EA",
 }
 
 CHURCH_MARKER_STYLES = {
@@ -98,6 +99,11 @@ CHURCH_MARKER_STYLES = {
         "border": [21, 128, 61, 255],
         "label_color": [21, 128, 61, 255],
     },
+    "Missionary": {
+        "fill": [192, 132, 252, 255],
+        "border": [147, 51, 234, 255],
+        "label_color": [147, 51, 234, 255],
+    },
 }
 
 CHURCH_LOCATIONS = {
@@ -108,6 +114,7 @@ CHURCH_LOCATIONS = {
 CHURCH_FULL_NAMES = {
     "Filam": "Fil-American Baptist Church",
     "Pillar": "Pillar of Faith Baptist Church",
+    "Missionary": "Missionary",
 }
 
 MONTH_NAMES = [
@@ -121,6 +128,15 @@ MONTH_ABBR = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
 
 def church_full_name(church: str) -> str:
     return CHURCH_FULL_NAMES.get(church, church)
+
+
+def church_color_legend_html(*, separator: str = " · ") -> str:
+    """HTML legend dots for each church affiliation color."""
+    parts = [
+        f"<span style='color:{CHURCH_COLORS[church]}'>●</span> {church_full_name(church)}"
+        for church in CHURCH_COLORS
+    ]
+    return separator.join(parts)
 
 
 def _is_missing(value) -> bool:
@@ -649,33 +665,29 @@ def _hex_to_rgba(hex_color: str, alpha: int = 200) -> list[int]:
     return [r, g, b, alpha]
 
 
-# Chicagoland + nearby states; keeps international/outlier geocodes off the map.
-MAP_DISPLAY_BOUNDS = {
-    "lat_min": 36.0,
-    "lat_max": 46.5,
-    "lng_min": -96.0,
-    "lng_max": -82.0,
-}
-
-
-def is_map_display_coordinate(lat: float, lng: float) -> bool:
-    """Return True when coordinates fall in the regional map viewport."""
-    return (
-        MAP_DISPLAY_BOUNDS["lat_min"] <= lat <= MAP_DISPLAY_BOUNDS["lat_max"]
-        and MAP_DISPLAY_BOUNDS["lng_min"] <= lng <= MAP_DISPLAY_BOUNDS["lng_max"]
-    )
+def is_valid_coordinate(lat: float, lng: float) -> bool:
+    """Return True when lat/lng are within standard geographic ranges."""
+    try:
+        lat_f, lng_f = float(lat), float(lng)
+    except (TypeError, ValueError):
+        return False
+    return -90.0 <= lat_f <= 90.0 and -180.0 <= lng_f <= 180.0
 
 
 CHICAGO_MAP_CENTER = (41.8781, -87.6298)
-MAP_BUILD_ID = "regional-zoom-limits"
-REGIONAL_MAP_MIN_ZOOM = 7.0
-REGIONAL_MAP_MAX_ZOOM = 10.0
-REGIONAL_MAP_MAX_ZOOM_PUBLIC = REGIONAL_MAP_MAX_ZOOM
-REGIONAL_MAP_MAX_ZOOM_ADMIN = REGIONAL_MAP_MAX_ZOOM
+MAP_BUILD_ID = "global-map-chicagoland-default"
+MAP_MIN_ZOOM = 0.0
+MAP_MAX_ZOOM = 20.0
+MAP_DEFAULT_ZOOM = 8.0
+# Backward-compatible aliases for map view builders.
+REGIONAL_MAP_MIN_ZOOM = MAP_MIN_ZOOM
+REGIONAL_MAP_MAX_ZOOM = MAP_MAX_ZOOM
+REGIONAL_MAP_MAX_ZOOM_PUBLIC = MAP_MAX_ZOOM
+REGIONAL_MAP_MAX_ZOOM_ADMIN = MAP_MAX_ZOOM
 
 
 def prepare_map_frame(df: pd.DataFrame | None) -> pd.DataFrame:
-    """Coerce lat/lng to numbers and drop rows outside the regional map bounds."""
+    """Coerce lat/lng to numbers and drop rows with invalid coordinates."""
     if df is None or df.empty:
         return pd.DataFrame()
     frame = df.copy()
@@ -685,7 +697,7 @@ def prepare_map_frame(df: pd.DataFrame | None) -> pd.DataFrame:
     if valid.empty:
         return valid
     mask = valid.apply(
-        lambda row: is_map_display_coordinate(row["lat"], row["lng"]),
+        lambda row: is_valid_coordinate(row["lat"], row["lng"]),
         axis=1,
     )
     return valid.loc[mask].reset_index(drop=True)
@@ -693,44 +705,11 @@ def prepare_map_frame(df: pd.DataFrame | None) -> pd.DataFrame:
 
 def compute_regional_view_state(
     *frames: pd.DataFrame,
-    default_zoom: float = 8.0,
+    default_zoom: float = MAP_DEFAULT_ZOOM,
 ) -> dict[str, float]:
-    """Center and zoom the map on in-bounds coordinates only."""
-    import math
-
-    coords: list[tuple[float, float]] = []
-    for frame in frames:
-        prepared = prepare_map_frame(frame)
-        for _, row in prepared.iterrows():
-            coords.append((row["lat"], row["lng"]))
-    if not coords:
-        lat, lng = CHICAGO_MAP_CENTER
-        return {"latitude": lat, "longitude": lng, "zoom": default_zoom}
-    lats = [lat for lat, _ in coords]
-    lngs = [lng for _, lng in coords]
-    center_lat = sum(lats) / len(lats)
-    center_lng = sum(lngs) / len(lngs)
-    lat_span = max(lats) - min(lats)
-    lng_span = max(lngs) - min(lngs)
-    span = max(lat_span, lng_span, 0.08)
-    zoom = max(REGIONAL_MAP_MIN_ZOOM, min(REGIONAL_MAP_MAX_ZOOM_PUBLIC, 9.2 - math.log2(span / 0.25)))
-    return {"latitude": center_lat, "longitude": center_lng, "zoom": zoom}
-
-
-def out_of_region_geocoded_addresses(
-    addresses: list[str],
-    geocode_cache: dict,
-) -> list[str]:
-    """Addresses geocoded successfully but outside the regional map bounds."""
-    excluded = []
-    for address in addresses:
-        geo = geocode_cache.get(address, {})
-        lat, lng = geo.get("lat"), geo.get("lng")
-        if lat is None or lng is None:
-            continue
-        if not is_map_display_coordinate(lat, lng):
-            excluded.append(address)
-    return sorted(excluded)
+    """Return the default Chicagoland map view; frames are ignored."""
+    lat, lng = CHICAGO_MAP_CENTER
+    return {"latitude": lat, "longitude": lng, "zoom": default_zoom}
 
 
 def deck_layer_records(df: pd.DataFrame) -> list[dict]:
@@ -748,7 +727,7 @@ def build_map_data(households: list[dict], geocode_cache: dict) -> pd.DataFrame:
         lat, lng = geo.get("lat"), geo.get("lng")
         if lat is None or lng is None:
             continue
-        if not is_map_display_coordinate(lat, lng):
+        if not is_valid_coordinate(lat, lng):
             continue
         hex_color = CHURCH_COLORS.get(hh["primary_church"], "#6B7280")
         rows.append({
@@ -791,7 +770,7 @@ def build_church_map_data(
             lat, lng = float(lat), float(lng)
         except (TypeError, ValueError):
             continue
-        if not is_map_display_coordinate(lat, lng):
+        if not is_valid_coordinate(lat, lng):
             continue
         style = CHURCH_MARKER_STYLES.get(church, CHURCH_MARKER_STYLES["Filam"])
         rows.append({
@@ -840,7 +819,7 @@ def build_public_density_data(
         lat, lng = geo.get("lat"), geo.get("lng")
         if lat is None or lng is None:
             continue
-        if not is_map_display_coordinate(lat, lng):
+        if not is_valid_coordinate(lat, lng):
             continue
         snap_lat = round(lat / grid_size) * grid_size
         snap_lng = round(lng / grid_size) * grid_size
