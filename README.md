@@ -1,17 +1,40 @@
-# Church Directory
+<div align="center">
 
-A Streamlit **admin-only** directory for **Filam** and **Pillar** churches. The full app is behind login — there is no public portal.
+# Filam & Pillar Church Directory
 
-**Live app:** [https://filampillardirectory.streamlit.app/](https://filampillardirectory.streamlit.app/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://filampillardirectory.streamlit.app/)
+[![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
+[![Live App](https://img.shields.io/badge/🚀_Live_App-open-success?style=for-the-badge)](https://filampillardirectory.streamlit.app/)
+
+A Streamlit **admin-only** directory for **Filam** and **Pillar** churches.  
+The full app is behind login — there is no public portal.
+
+**[Open live app →](https://filampillardirectory.streamlit.app/)**
+
+<br>
+
+![Python](https://img.shields.io/badge/python-3670A0?style=flat-square&logo=python&logoColor=ffdd54)
+![Streamlit](https://img.shields.io/badge/Streamlit-%23FE4B4B.svg?style=flat-square&logo=streamlit&logoColor=white)
+![Pandas](https://img.shields.io/badge/pandas-%23150458.svg?style=flat-square&logo=pandas&logoColor=white)
+![Plotly](https://img.shields.io/badge/Plotly-%233F4F75.svg?style=flat-square&logo=plotly&logoColor=white)
+![Google Sheets](https://img.shields.io/badge/Google%20Sheets-34A853?style=flat-square&logo=google-sheets&logoColor=white)
+![Pytest](https://img.shields.io/badge/pytest-%23ffffff.svg?style=flat-square&logo=pytest&logoColor=2f9fe3)
+
+</div>
+
+---
 
 ## Features
 
 **Staff directory** (login required)
 
-- Searchable people directory with table, card, and household views
-- Household map with geocoding
-- Full calendar including children's birthdays from parent records
-- Leadership insights and data quality reporting
+| | Capability |
+|---|---|
+| 🔍 | Searchable people directory — table, card, and household views |
+| 🗺️ | Household map with geocoding |
+| 📅 | Full calendar including children's birthdays from parent records |
+| 📊 | Leadership insights and data quality reporting |
 
 ## Login
 
@@ -187,3 +210,11 @@ scripts/
 data/
   sample_directory.csv
 ```
+
+---
+
+<div align="center">
+
+**[Live App](https://filampillardirectory.streamlit.app/)** · MIT License · Built with Streamlit
+
+</div>
