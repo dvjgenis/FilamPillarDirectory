@@ -2,17 +2,17 @@
 
 # Filam & Pillar Church Directory
 
-[![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://filampillardirectory.streamlit.app/)
+[![Live App](https://img.shields.io/badge/Live_App-filampillardirectory.streamlit.app-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://filampillardirectory.streamlit.app/)
 [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
-[![Live App](https://img.shields.io/badge/🚀_Live_App-open-success?style=for-the-badge)](https://filampillardirectory.streamlit.app/)
 
-A Streamlit **admin-only** directory for **Filam** and **Pillar** churches.  
-The full app is behind login — there is no public portal.
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=500&size=18&duration=3500&pause=1000&color=C2410C&center=true&vCenter=true&width=620&height=50&lines=Staff-only+church+directory;Search+%C2%B7+map+%C2%B7+calendar+%C2%B7+insights" alt="Typing SVG" />
+
+**TL;DR — One sentence:** A login-gated Streamlit app that helps Filam and Pillar church staff search people, map households, track birthdays/events, and spot data-quality issues — without putting a public member portal on the internet.
+
+**Why it matters:** Church directories are full of PII. Staff still need searchable, map-aware tools day to day. This app keeps the full experience behind email allowlist + password + one-time code, and can pull live data from a private Google Sheet so real member records never need to live in GitHub.
 
 **[Open live app →](https://filampillardirectory.streamlit.app/)**
-
-<br>
 
 ![Python](https://img.shields.io/badge/python-3670A0?style=flat-square&logo=python&logoColor=ffdd54)
 ![Streamlit](https://img.shields.io/badge/Streamlit-%23FE4B4B.svg?style=flat-square&logo=streamlit&logoColor=white)
@@ -25,27 +25,51 @@ The full app is behind login — there is no public portal.
 
 ---
 
-## Features
+## What this is (in plain English)
 
-**Staff directory** (login required)
+Filam & Pillar staff get one place to:
+
+1. **Find people** — table, card, and household views  
+2. **See where households live** — map with background geocoding  
+3. **Stay ahead of dates** — calendar, including children's birthdays from parent records  
+4. **Check data health** — leadership insights and quality reporting  
+
+There is **no public portal**. Opening the app shows login only. After sign-in, the admin directory loads.
+
+---
+
+## Why it's interesting / significant
+
+| | |
+|---|---|
+| **Privacy by design** | Auth wall + OTP; production CSV / geocode cache stay gitignored |
+| **Ops-ready data path** | Local CSV for simple runs, or private Google Sheets for live updates in production |
+| **Staff workflow in one UI** | Directory + map + calendar + insights — not a spreadsheet scavenger hunt |
+| **Deployable** | Streamlit Cloud + secrets sync + optional pre-geocode so maps work on first load |
+
+---
+
+## Features
 
 | | Capability |
 |---|---|
-| 🔍 | Searchable people directory — table, card, and household views |
-| 🗺️ | Household map with geocoding |
-| 📅 | Full calendar including children's birthdays from parent records |
-| 📊 | Leadership insights and data quality reporting |
+| Search | People directory — table, card, and household views |
+| Map | Household (and church) markers with geocoding |
+| Calendar | Events plus children's birthdays from parent records |
+| Insights | Leadership views and data-quality reporting |
 
-## Login
+---
 
-1. Open the [live app](https://filampillardirectory.streamlit.app/) (or run locally with `make dev`) — you will see the login screen only.
-2. Enter one of the authorized church emails and the **shared staff password**.
-3. Click **Send verification code** — a 6-digit code is emailed **only to that address**.
-4. Enter the code to sign in. The session ends when you close the browser or click **Log out**.
+## Login flow
+
+1. Open the [live app](https://filampillardirectory.streamlit.app/) (or `make dev`) — login screen only  
+2. Enter an allowlisted church email + the shared staff password  
+3. Click **Send verification code** — a 6-digit OTP is emailed **only to that address**  
+4. Enter the code. Session ends on browser close or **Log out**  
 
 ### Credentials setup
 
-Copy `admin_credentials.sample.toml` to `admin_credentials.toml` (gitignored), or run:
+Copy `admin_credentials.sample.toml` → `admin_credentials.toml` (gitignored), or run:
 
 ```bash
 python scripts/setup_admin.py
@@ -53,12 +77,14 @@ python scripts/setup_admin.py
 
 Configure:
 
-- **email1–email3** — allowlisted addresses that may sign in
-- **password** — shared staff password (plaintext in the local file)
-- **smtp.user** — Gmail sender (`dvjgenis@gmail.com` or your church Gmail)
-- **smtp.app_password** — [Google App Password](https://myaccount.google.com/apppasswords) (2-Step Verification required)
+- **email1–email3** — allowlisted addresses that may sign in  
+- **password** — shared staff password (plaintext in the local file)  
+- **smtp.user** — Gmail sender for OTP mail  
+- **smtp.app_password** — [Google App Password](https://myaccount.google.com/apppasswords) (2-Step Verification required)  
 
 Legacy layout is also supported: `email1`–`email3` under `[credentials.usernames.filpilchurch]` and `app_password` under `[Gmail App Password]` or `[smtp]`.
+
+---
 
 ## Quick start
 
@@ -66,64 +92,54 @@ Legacy layout is also supported: `email1`–`email3` under `[credentials.usernam
 make dev
 ```
 
-Opens the app at `http://localhost:8501`.
+App: `http://localhost:8501`
 
-### Using sample data for development
+**Sample data (safe for development):**
 
 ```bash
 export CHURCH_CSV_PATH=data/sample_directory.csv
 make dev
 ```
 
-If SMTP is not configured locally, the app shows the OTP on screen in dev mode only (not on Streamlit Cloud).
+If SMTP is not configured locally, the OTP can appear on screen in **dev mode only** (not on Streamlit Cloud).
+
+---
 
 ## Data
 
-The app reads from **local CSV** (default) or **Google Sheets** (recommended for deployment).
+Reads from **local CSV** (default) or **Google Sheets** (recommended for deployment).
 
-- **Production CSV:** `Filam_Pillar Church Directory - Main.csv` (gitignored — contains real PII)
-- **Sample CSV:** `data/sample_directory.csv` (safe fake records for dev)
-- **Geocode cache:** `geocode_cache.json` (gitignored)
+| Source | Path / note |
+|--------|-------------|
+| Production CSV | `Filam_Pillar Church Directory - Main.csv` (gitignored — real PII) |
+| Sample CSV | `data/sample_directory.csv` (fake records for dev) |
+| Geocode cache | `geocode_cache.json` (gitignored) |
 
-### Google Sheets (live updates — recommended for deployment)
+### Google Sheets (live updates)
 
 Use a **private Google Sheet** as the source of truth. The app refetches every 5 minutes (configurable) and when staff click **Refresh data**. Member data stays out of GitHub.
 
-#### Sheet format
+**Sheet format:** Row 1 must use the same 15 column headers as `data/sample_directory.csv`. Booleans accept `TRUE`/`FALSE`, `Yes`/`No`, etc.
 
-Row 1 must use the same 15 column headers as the CSV (see `data/sample_directory.csv`). Boolean columns accept `TRUE`/`FALSE`, `Yes`/`No`, etc.
-
-Copy the **Sheet ID** from the URL: `https://docs.google.com/spreadsheets/d/SHEET_ID/edit`
-
-#### Share the sheet
+**Sheet ID** from the URL: `https://docs.google.com/spreadsheets/d/SHEET_ID/edit`
 
 | Who | Permission | Why |
 |-----|------------|-----|
 | Trusted staff who edit the directory | Editor | Maintain records |
-| `filampillardirectory-sa@filampillardirectory.iam.gserviceaccount.com` | **Viewer** | App reads via service account |
+| App service account | **Viewer** | App reads via service account |
 
-#### Local development & secrets
+**Local + secrets:**
 
-1. Place the service account JSON at `.streamlit/filampillardirectory-cb6db0de17be.json` (gitignored).
-2. Enable **Google Sheets API** on the `filampillardirectory` GCP project.
-3. Sync secrets from the JSON key:
+1. Place the service account JSON under `.streamlit/` (gitignored)  
+2. Enable **Google Sheets API** on the GCP project  
+3. Sync and run:
 
 ```bash
 make sync-secrets   # writes .streamlit/secrets.toml
-make dev-sheets
+make dev-sheets     # also runs sync-secrets
 ```
 
-`make dev-sheets` runs `sync-secrets` automatically.
-
-#### Streamlit Cloud deployment
-
-**Deployed app:** [https://filampillardirectory.streamlit.app/](https://filampillardirectory.streamlit.app/)
-
-1. Run `make sync-secrets` locally.
-2. Copy the entire contents of `.streamlit/secrets.toml` into **Streamlit Cloud → App settings → Secrets**.
-3. Reboot the app.
-
-**Environment variables (alternative to secrets):**
+**Streamlit Cloud:** Run `make sync-secrets`, paste `.streamlit/secrets.toml` into **App settings → Secrets**, reboot.
 
 | Variable | Purpose |
 |----------|---------|
@@ -131,27 +147,27 @@ make dev-sheets
 | `CHURCH_SHEET_ID` | Google Sheet ID |
 | `CHURCH_SHEET_WORKSHEET` | Tab name (optional; defaults to first tab) |
 | `CHURCH_SHEET_CACHE_TTL` | Seconds between auto-refresh (default `300`) |
-| `GOOGLE_APPLICATION_CREDENTIALS` | Path to service account JSON (optional override) |
+| `GOOGLE_APPLICATION_CREDENTIALS` | Path to service account JSON (optional) |
 | `CHURCH_GCP_SERVICE_ACCOUNT_JSON` | Inline service account JSON string |
 
 ### Clean the CSV
-
-Remove blank padding rows and print a data quality report:
 
 ```bash
 python scripts/clean_csv.py
 python scripts/clean_csv.py --dry-run
 ```
 
-### Geocoding workflow
+### Geocoding
 
-After you sign in, the app **starts mapping household and church addresses in the background** (~1 second per new address). You can use Directory, Calendar, and Insights while mapping runs; the sidebar shows progress (`Mapping addresses: X/Y…`).
+After sign-in, household and church addresses geocode **in the background** (~1s per new address). Directory / Calendar / Insights stay usable; the sidebar shows `Mapping addresses: X/Y…`.
 
-1. Sign in — background geocoding begins automatically.
-2. Open **Household Map** when ready. If mapping is still running, the page explains that you can check back shortly; partial maps appear as addresses finish.
-3. Use **Geocode all missing** on the map page (expand **Map tools**) if you need to force or retry geocoding.
+1. Sign in — background geocoding starts  
+2. Open **Household Map** when ready (partial maps appear as addresses finish)  
+3. Use **Geocode all missing** under **Map tools** to force or retry  
 
-Church building markers are included in the same background job. For instant maps on Streamlit Cloud, embed `[geocode_cache]` in secrets via `make pregeocode` and `make sync-secrets`.
+For instant maps on Streamlit Cloud, embed `[geocode_cache]` in secrets via `make pregeocode` and `make sync-secrets`.
+
+---
 
 ## Configuration
 
@@ -174,30 +190,33 @@ user = "sender@gmail.com"
 app_password = "xxxx xxxx xxxx xxxx"
 ```
 
+---
+
 ## Tests
 
 ```bash
 make test
 ```
 
+---
+
 ## Deployment checklist
 
-1. Push code to GitHub — **do not** commit the real CSV, geocode cache, or credentials
-2. Production URL: [https://filampillardirectory.streamlit.app/](https://filampillardirectory.streamlit.app/) (Streamlit Community Cloud)
-3. Run `make sync-secrets` locally and paste the full generated `.streamlit/secrets.toml` into Streamlit Cloud → App settings → Secrets (includes `google_sheets`, `gcp_service_account`, `[auth]`, and `[smtp]`)
-4. Bootstrap geocoding for Cloud (optional but recommended):
-   - `make pregeocode` — builds `geocode_cache.json` locally
-   - `make pregeocode-secrets` — prints a `[geocode_cache]` block to paste into secrets so maps work immediately after deploy
-5. Share the Google Sheet only with trusted staff + the service account
-6. Host behind HTTPS (Streamlit Cloud does this automatically)
+1. Push code — **do not** commit the real CSV, geocode cache, or credentials  
+2. Live URL: [filampillardirectory.streamlit.app](https://filampillardirectory.streamlit.app/)  
+3. `make sync-secrets` → paste full `.streamlit/secrets.toml` into Streamlit Cloud Secrets  
+4. Optional map bootstrap: `make pregeocode` then `make pregeocode-secrets`  
+5. Share the Google Sheet only with trusted staff + the service account  
 
-**Note:** Without a secrets geocode cache, the map fills in over a few minutes after sign-in while background geocoding runs. Manual geocode tools remain on the Household Map page.
+Without a secrets geocode cache, the map fills in over a few minutes after sign-in while background geocoding runs.
+
+---
 
 ## Project layout
 
-```
+```text
 app.py              Entry point (login gate + admin routing)
-auth.py             Email + password + OTP authentication
+auth.py             Email + password + OTP
 data_source.py      CSV / Google Sheets loader
 helpers.py          Cleaning, geocoding, events, filters
 views/
@@ -205,7 +224,7 @@ views/
   shared.py         CSS, calendar, charts
 scripts/
   setup_admin.py    Credential generator
-  pregeocode.py     Build geocode cache for local dev or Streamlit secrets
+  pregeocode.py     Geocode cache for local or Cloud secrets
   clean_csv.py      CSV cleanup and audit
 data/
   sample_directory.csv
