@@ -1,5 +1,9 @@
 <div align="center">
 
+<img src="docs/banner.svg" alt="Filam & Pillar Church Directory — staff-only search, map, calendar, and insights" width="100%" />
+
+<br/>
+
 # Filam & Pillar Church Directory
 
 [![Live App](https://img.shields.io/badge/Live_App-filampillardirectory.streamlit.app-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://filampillardirectory.streamlit.app/)
