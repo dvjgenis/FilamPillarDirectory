@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from helpers import CSV_COLUMNS, CSV_DTYPES, SAMPLE_CSV_PATH
+from helpers import CSV_COLUMNS, CSV_DTYPES, SAMPLE_CSV_PATH, extra_age_source_columns
 
 DATA_DIR = Path(__file__).parent
 
@@ -223,10 +223,11 @@ def load_directory_from_sheets() -> pd.DataFrame:
         )
 
     df = pd.DataFrame(records)
+    extras = extra_age_source_columns(df.columns)
     for col in CSV_COLUMNS:
         if col not in df.columns:
             df[col] = ""
-    df = df[CSV_COLUMNS]
+    df = df[CSV_COLUMNS + extras]
 
     for col in CSV_DTYPES:
         if col in df.columns:

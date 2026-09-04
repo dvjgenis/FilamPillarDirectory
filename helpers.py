@@ -50,6 +50,22 @@ CSV_COLUMNS = [
     "Opt_In_Announcements",
 ]
 
+# Optional source columns — used to derive Age / Age_Group for directory filters
+OPTIONAL_AGE_COLUMNS = ["Age", "Age_Group", "Birth_Year"]
+
+AGE_GROUP_BELOW_13 = "Below 13"
+AGE_GROUP_TEEN = "13-18"
+AGE_GROUP_ADULT = "18+"
+AGE_GROUP_SENIOR = "Seniors 65+"
+
+AGE_GROUP_FILTER_OPTIONS = [
+    "All",
+    AGE_GROUP_BELOW_13,
+    AGE_GROUP_TEEN,
+    AGE_GROUP_ADULT,
+    AGE_GROUP_SENIOR,
+]
+
 # Shown on public person-level views only
 PUBLIC_PERSON_COLUMNS = [
     "First_Name",
@@ -78,6 +94,7 @@ SENSITIVE_FIELDS = [
     *MINOR_FIELDS,
     "Is_Member",
     "Opt_In_Announcements",
+    *OPTIONAL_AGE_COLUMNS,
 ]
 
 ALL_DISPLAY_FIELDS = list(CSV_COLUMNS)
@@ -214,6 +231,7 @@ def clean_directory(df: pd.DataFrame) -> pd.DataFrame:
         & (df["First_Name"].astype(str).str.strip() != "")
     ].reset_index(drop=True)
 
+    df = normalize_age_columns(df)
     df["Full_Name"] = df["First_Name"].astype(str).str.strip() + " " + df["Last_Name"].astype(str).str.strip()
     df["Is_Member"] = df["Is_Member"].map(_map_bool)
     df["Opt_In_Announcements"] = df["Opt_In_Announcements"].map(_map_bool)
@@ -223,6 +241,13 @@ def clean_directory(df: pd.DataFrame) -> pd.DataFrame:
     )
     df["City"] = df["Home_Address"].apply(_extract_city)
     df["State"] = df["Home_Address"].apply(_extract_state)
+    df["Age"] = pd.array(
+        [resolve_person_age(row) for _, row in df.iterrows()],
+        dtype="Int64",
+    )
+    df["Age_Group"] = [
+        resolve_person_age_group(row) for _, row in df.iterrows()
+    ]
     return df
 
 
@@ -288,28 +313,245 @@ def sanitize_events_for_public(events: list[dict]) -> list[dict]:
     return public
 
 
-def _parse_mmdd(value) -> tuple[int | None, int | None]:
-    """Parse MM/DD; return (None, None) for missing or invalid values."""
+def extra_age_source_columns(columns) -> list[str]:
+    """Return Age / Age_Group / Birth_Year headers present under common aliases."""
+    extras: list[str] = []
+    for col in columns:
+        key = re.sub(r"[^a-z0-9]", "", str(col).strip().lower())
+        if key in {"age", "agegroup", "birthyear"}:
+            extras.append(col)
+    return extras
+
+
+def normalize_age_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """Rename optional age headers to Age / Age_Group / Birth_Year."""
+    targets = {"age": "Age", "agegroup": "Age_Group", "birthyear": "Birth_Year"}
+    rename: dict[str, str] = {}
+    used_targets: set[str] = set()
+    for col in df.columns:
+        key = re.sub(r"[^a-z0-9]", "", str(col).strip().lower())
+        target = targets.get(key)
+        if target and target not in df.columns and target not in used_targets:
+            rename[col] = target
+            used_targets.add(target)
+    if rename:
+        df = df.rename(columns=rename)
+    for col in OPTIONAL_AGE_COLUMNS:
+        if col not in df.columns:
+            df[col] = pd.NA
+    return df
+
+
+def _parse_date_parts(value) -> tuple[int | None, int | None, int | None]:
+    """Parse a date into (month, day, year). Year may be None."""
     if pd.isna(value):
-        return None, None
+        return None, None, None
 
     text = str(value).strip()
     if not text or text.lower() in {"nan", "none", "not available", "n/a", "na"}:
-        return None, None
+        return None, None, None
+
+    iso = re.match(r"^(\d{4})-(\d{1,2})-(\d{1,2})$", text)
+    if iso:
+        year, month, day = (int(iso.group(1)), int(iso.group(2)), int(iso.group(3)))
+        if 1 <= month <= 12 and 1 <= day <= 31:
+            return month, day, year if 1900 <= year <= date.today().year + 1 else None
+        return None, None, None
 
     parts = text.split("/")
-    if len(parts) != 2:
-        return None, None
+    if len(parts) == 2:
+        try:
+            month, day = int(parts[0]), int(parts[1])
+        except ValueError:
+            return None, None, None
+        if 1 <= month <= 12 and 1 <= day <= 31:
+            return month, day, None
+        return None, None, None
 
-    try:
-        month, day = int(parts[0]), int(parts[1])
-    except ValueError:
-        return None, None
+    if len(parts) == 3:
+        try:
+            first, second, third = int(parts[0]), int(parts[1]), int(parts[2])
+        except ValueError:
+            return None, None, None
+        if first >= 1900:
+            year, month, day = first, second, third
+        else:
+            month, day, year = first, second, third
+        if not (1 <= month <= 12 and 1 <= day <= 31):
+            return None, None, None
+        if year and not (1900 <= year <= date.today().year + 1):
+            year = None
+        return month, day, year
 
-    if not (1 <= month <= 12 and 1 <= day <= 31):
-        return None, None
+    return None, None, None
 
+
+def _parse_mmdd(value) -> tuple[int | None, int | None]:
+    """Parse MM/DD or a fuller date; return (None, None) for missing or invalid values."""
+    month, day, _year = _parse_date_parts(value)
     return month, day
+
+
+def _parse_optional_int(value) -> int | None:
+    if _is_missing(value):
+        return None
+    try:
+        return int(float(str(value).strip()))
+    except (TypeError, ValueError):
+        return None
+
+
+def compute_age_from_birth(
+    year: int,
+    month: int | None = None,
+    day: int | None = None,
+    today: date | None = None,
+) -> int:
+    """Age in years from a birth year, using month/day when available."""
+    today = today or date.today()
+    if month is None or day is None:
+        return max(0, today.year - year)
+    try:
+        born = date(year, month, day)
+    except ValueError:
+        born = date(year, month, 28)
+    age = today.year - born.year
+    if (today.month, today.day) < (born.month, born.day):
+        age -= 1
+    return max(0, age)
+
+
+def resolve_person_age(row, today: date | None = None) -> int | None:
+    """Prefer an explicit Age, then Birth_Year, then a birthday that includes a year."""
+    today = today or date.today()
+    explicit = _parse_optional_int(row.get("Age") if hasattr(row, "get") else None)
+    if explicit is not None and 0 <= explicit <= 130:
+        return explicit
+
+    birth_year = _parse_optional_int(row.get("Birth_Year") if hasattr(row, "get") else None)
+    month = row.get("Birthday_Month") if hasattr(row, "get") else None
+    day = row.get("Birthday_Day") if hasattr(row, "get") else None
+    if isinstance(month, float) and pd.isna(month):
+        month = None
+    if isinstance(day, float) and pd.isna(day):
+        day = None
+    if month is not None:
+        try:
+            month = int(month)
+        except (TypeError, ValueError):
+            month = None
+    if day is not None:
+        try:
+            day = int(day)
+        except (TypeError, ValueError):
+            day = None
+
+    birthday_month, birthday_day, birthday_year = _parse_date_parts(
+        row.get("Birthday") if hasattr(row, "get") else None
+    )
+    if month is None:
+        month = birthday_month
+    if day is None:
+        day = birthday_day
+    if birth_year is None:
+        birth_year = birthday_year
+    if birth_year is not None and 1900 <= birth_year <= today.year:
+        return compute_age_from_birth(birth_year, month, day, today=today)
+    return None
+
+
+def age_group_from_age(age: int) -> str:
+    if age < 13:
+        return AGE_GROUP_BELOW_13
+    if age <= 18:
+        return AGE_GROUP_TEEN
+    if age >= 65:
+        return AGE_GROUP_SENIOR
+    return AGE_GROUP_ADULT
+
+
+_AGE_GROUP_ALIASES = {
+    "below 13": AGE_GROUP_BELOW_13,
+    "under 13": AGE_GROUP_BELOW_13,
+    "<13": AGE_GROUP_BELOW_13,
+    "0-12": AGE_GROUP_BELOW_13,
+    "child": AGE_GROUP_BELOW_13,
+    "children": AGE_GROUP_BELOW_13,
+    "kids": AGE_GROUP_BELOW_13,
+    "13-18": AGE_GROUP_TEEN,
+    "13–18": AGE_GROUP_TEEN,
+    "teen": AGE_GROUP_TEEN,
+    "teens": AGE_GROUP_TEEN,
+    "youth": AGE_GROUP_TEEN,
+    "18+": AGE_GROUP_ADULT,
+    "18 and over": AGE_GROUP_ADULT,
+    "18 and up": AGE_GROUP_ADULT,
+    "adult": AGE_GROUP_ADULT,
+    "adults": AGE_GROUP_ADULT,
+    "65+": AGE_GROUP_SENIOR,
+    "senior": AGE_GROUP_SENIOR,
+    "seniors": AGE_GROUP_SENIOR,
+    "seniors 65+": AGE_GROUP_SENIOR,
+}
+
+
+def normalize_age_group(value) -> str:
+    """Map free-text age group labels onto the four filter buckets."""
+    if _is_missing(value):
+        return ""
+    text = str(value).strip()
+    if text in {
+        AGE_GROUP_BELOW_13,
+        AGE_GROUP_TEEN,
+        AGE_GROUP_ADULT,
+        AGE_GROUP_SENIOR,
+    }:
+        return text
+    key = text.lower().replace("–", "-")
+    return _AGE_GROUP_ALIASES.get(key, "")
+
+
+def _usable_age(value) -> int | None:
+    if value is None:
+        return None
+    try:
+        if pd.isna(value):
+            return None
+    except (TypeError, ValueError):
+        return None
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def resolve_person_age_group(row) -> str:
+    """Prefer a computed age bucket; fall back to a labeled Age_Group column."""
+    age = _usable_age(row.get("Age") if hasattr(row, "get") else None)
+    if age is not None:
+        return age_group_from_age(age)
+    return normalize_age_group(row.get("Age_Group") if hasattr(row, "get") else None)
+
+
+def row_matches_age_group(row, age_group_filter: str) -> bool:
+    """True when a directory row belongs in the selected age-group filter."""
+    if not age_group_filter or age_group_filter == "All":
+        return True
+
+    age = _usable_age(row.get("Age") if hasattr(row, "get") else None)
+    age_group = normalize_age_group(row.get("Age_Group") if hasattr(row, "get") else None)
+
+    if age_group_filter == AGE_GROUP_BELOW_13:
+        return age < 13 if age is not None else age_group == AGE_GROUP_BELOW_13
+    if age_group_filter == AGE_GROUP_TEEN:
+        return 13 <= age <= 18 if age is not None else age_group == AGE_GROUP_TEEN
+    if age_group_filter == AGE_GROUP_ADULT:
+        if age is not None:
+            return age >= 18
+        return age_group in {AGE_GROUP_ADULT, AGE_GROUP_SENIOR}
+    if age_group_filter == AGE_GROUP_SENIOR:
+        return age >= 65 if age is not None else age_group == AGE_GROUP_SENIOR
+    return True
 
 
 def _extract_city(address: str) -> str:
@@ -1117,6 +1359,7 @@ def filter_people(
     opt_in_filter: str = "All",
     sort_by: str = "Last Name",
     search_address: bool = True,
+    age_group_filter: str = "All",
 ) -> pd.DataFrame:
     result = df.copy()
 
@@ -1145,6 +1388,9 @@ def filter_people(
             result = result[result["Opt_In_Announcements"]]
         elif opt_in_filter == "Not Opted In":
             result = result[~result["Opt_In_Announcements"]]
+
+    if age_group_filter and age_group_filter != "All":
+        result = result[result.apply(lambda row: row_matches_age_group(row, age_group_filter), axis=1)]
 
     sort_cols = {
         "Last Name": ["Last_Name", "First_Name"],

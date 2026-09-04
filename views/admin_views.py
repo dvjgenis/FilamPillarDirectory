@@ -11,6 +11,7 @@ import pydeck as pdk
 import streamlit as st
 
 from helpers import (
+    AGE_GROUP_FILTER_OPTIONS,
     ALL_DISPLAY_FIELDS,
     CHURCH_COLORS,
     CSV_PATH,
@@ -93,6 +94,10 @@ def render_admin_person_card(person: dict):
         if children_bdays != "Not available":
             st.caption(f"🎂 Children birthdays: {children_bdays}")
 
+        age_group = display_value(person.get("Age_Group"))
+        if age_group != "Not available":
+            st.caption(f"👤 Age group: {age_group}")
+
         member_icon = "✅ Member" if person.get("Is_Member") else "➖ Non-member"
         opt_icon = "📢 Opted in" if person.get("Opt_In_Announcements") else "🔇 Not opted in"
         st.caption(f"{member_icon} · {opt_icon}")
@@ -149,6 +154,15 @@ def render_person_detail(p):
 
         city_state = f"{display_value(p.get('City'))}, {display_value(p.get('State'))}"
         st.write(f"**City / State:** {city_state}")
+        age_group = display_value(p.get("Age_Group"))
+        if age_group != "Not available":
+            st.write(f"**Age Group:** {age_group}")
+        age = p.get("Age")
+        if age is not None and not pd.isna(age) and str(age).strip() not in {"", "<NA>"}:
+            try:
+                st.write(f"**Age:** {int(age)}")
+            except (TypeError, ValueError):
+                pass
 
 
 @st.dialog("Person details")
@@ -162,8 +176,9 @@ def _directory_table_df(filtered: pd.DataFrame) -> pd.DataFrame:
     table["Member"] = table["Is_Member"].map({True: "Yes", False: "No"})
     table["Opt-in"] = table["Opt_In_Announcements"].map({True: "Yes", False: "No"})
     table["City"] = table["City"].apply(display_value)
+    table["Age group"] = table["Age_Group"].apply(display_value) if "Age_Group" in table.columns else "Not available"
     return table[
-        ["Full_Name", "Church_Affiliation", "Phone", "City", "Member", "Opt-in"]
+        ["Full_Name", "Church_Affiliation", "Age group", "Phone", "City", "Member", "Opt-in"]
     ].rename(columns={
         "Full_Name": "Name",
         "Church_Affiliation": "Church",
@@ -217,9 +232,18 @@ def page_directory(df, households):
         )
         member_filter = st.selectbox("Membership", ["All", "Members", "Non-Members"], key="adm_member")
         opt_in_filter = st.selectbox("Announcements", ["All", "Opted In", "Not Opted In"], key="adm_optin")
+        age_group_filter = st.selectbox(
+            "Age group",
+            AGE_GROUP_FILTER_OPTIONS,
+            key="adm_age_group",
+        )
         sort_by = st.selectbox("Sort by", ["Last Name", "First Name", "Church"], key="adm_sort")
+        if "Age_Group" in df.columns and not df["Age_Group"].fillna("").astype(str).str.strip().ne("").any():
+            st.caption("Add Age, Age_Group, or Birth_Year to the directory sheet to use this filter.")
 
-    filtered = filter_people(df, search, churches, member_filter, opt_in_filter, sort_by)
+    filtered = filter_people(
+        df, search, churches, member_filter, opt_in_filter, sort_by, age_group_filter=age_group_filter
+    )
     filtered_addresses = set(filtered["Home_Address"].dropna())
     filtered_households = [h for h in households if h["address"] in filtered_addresses]
 
@@ -237,12 +261,22 @@ def page_directory(df, households):
             f"**{len(filtered_households)} households**"
         )
     with download_col:
-        export_df = filtered[ALL_DISPLAY_FIELDS].copy()
+        export_cols = [c for c in ALL_DISPLAY_FIELDS if c in filtered.columns]
+        for extra in ("Age", "Age_Group"):
+            if extra in filtered.columns and extra not in export_cols:
+                export_cols.append(extra)
+        export_df = filtered[export_cols].copy()
         for col in export_df.columns:
             if col in ("Phone_Number", "Spouse_Phone"):
                 export_df[col] = export_df[col].apply(format_phone)
             elif col in ("Is_Member", "Opt_In_Announcements"):
                 export_df[col] = export_df[col].map({True: "Yes", False: "No"})
+            elif col == "Age":
+                export_df[col] = export_df[col].apply(
+                    lambda v: "" if pd.isna(v) or str(v).strip() in {"", "<NA>"} else str(int(v))
+                    if str(v).replace(".", "", 1).isdigit()
+                    else display_value(v)
+                )
             else:
                 export_df[col] = export_df[col].apply(display_value)
         st.download_button(

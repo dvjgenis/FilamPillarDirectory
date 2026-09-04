@@ -123,7 +123,7 @@ Reads from **local CSV** (default) or **Google Sheets** (recommended for deploym
 
 Use a **private Google Sheet** as the source of truth. The app refetches every 5 minutes (configurable) and when staff click **Refresh data**. Member data stays out of GitHub.
 
-**Sheet format:** Row 1 must use the same 15 column headers as `data/sample_directory.csv`. Booleans accept `TRUE`/`FALSE`, `Yes`/`No`, etc.
+**Sheet format:** Row 1 must use the same 15 column headers as `data/sample_directory.csv`. Optional `Age`, `Age_Group`, or `Birth_Year` columns enable the directory age-group filter (Below 13, 13–18, 18+, Seniors 65+). Booleans accept `TRUE`/`FALSE`, `Yes`/`No`, etc.
 
 **Sheet ID** from the URL: `https://docs.google.com/spreadsheets/d/SHEET_ID/edit`
 
